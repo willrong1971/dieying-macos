@@ -1,0 +1,299 @@
+{
+  "schema": 1,
+  "generator": "Original procedural contact/modal synthesis",
+  "recording": false,
+  "network": "none",
+  "sample_rate": 44100,
+  "method": "Band-limited noisy impulse, non-harmonic damped modes, quiet early reflections, smooth boundary fades.",
+  "note": "Perceptual finish variants; not physical measurements or recordings of the named materials.",
+  "seed_base": 2026102700,
+  "materials": {
+    "ivory": {
+      "description": "Dense, dry polished-tile clack with a short rounded body.",
+      "modes": [
+        [
+          690,
+          0.01,
+          0.3
+        ],
+        [
+          1740,
+          0.012,
+          0.28
+        ],
+        [
+          2865,
+          0.008,
+          0.22
+        ],
+        [
+          3970,
+          0.006,
+          0.16
+        ],
+        [
+          5380,
+          0.004,
+          0.14
+        ],
+        [
+          7140,
+          0.003,
+          0.08
+        ]
+      ],
+      "noise_band": [
+        1000,
+        11200
+      ],
+      "noise_decay": 0.0014,
+      "body_band": [
+        380,
+        1900
+      ],
+      "body_decay": 0.0052,
+      "impact": 0.78,
+      "body": 0.38,
+      "resonance": 0.55
+    },
+    "bamboo": {
+      "description": "Warmer, wood-like tock with a textured, rapidly damped attack.",
+      "modes": [
+        [
+          430,
+          0.009,
+          0.31
+        ],
+        [
+          970,
+          0.011,
+          0.36
+        ],
+        [
+          1585,
+          0.007,
+          0.23
+        ],
+        [
+          2470,
+          0.005,
+          0.18
+        ],
+        [
+          3780,
+          0.0035,
+          0.12
+        ],
+        [
+          5730,
+          0.002,
+          0.07
+        ]
+      ],
+      "noise_band": [
+        650,
+        8400
+      ],
+      "noise_decay": 0.0018,
+      "body_band": [
+        280,
+        1580
+      ],
+      "body_decay": 0.0075,
+      "impact": 0.68,
+      "body": 0.55,
+      "resonance": 0.49
+    },
+    "porcelain": {
+      "description": "Bright, tight ceramic-like clink with a restrained high tail.",
+      "modes": [
+        [
+          880,
+          0.007,
+          0.19
+        ],
+        [
+          2310,
+          0.014,
+          0.28
+        ],
+        [
+          4175,
+          0.021,
+          0.2
+        ],
+        [
+          5890,
+          0.013,
+          0.16
+        ],
+        [
+          7440,
+          0.008,
+          0.1
+        ],
+        [
+          9635,
+          0.0045,
+          0.06
+        ]
+      ],
+      "noise_band": [
+        1450,
+        14500
+      ],
+      "noise_decay": 0.0011,
+      "body_band": [
+        460,
+        2200
+      ],
+      "body_decay": 0.004,
+      "impact": 0.83,
+      "body": 0.27,
+      "resonance": 0.49
+    }
+  },
+  "clips": {
+    "ivory-pick-1": {
+      "path": "public/audio/tiles/ivory-pick-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.03550997193849011,
+      "spectral_centroid_hz": 1731.7808034780546,
+      "bytes": 11510,
+      "sha256": "0c5c8edd77f77b474a5771e6007035782e45942da91aa9ff9eb03d931a1a9491"
+    },
+    "ivory-pick-2": {
+      "path": "public/audio/tiles/ivory-pick-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.03514121668622676,
+      "spectral_centroid_hz": 2876.3396427330244,
+      "bytes": 11510,
+      "sha256": "6c809dd83db8ccec22228ea44c0a1bb4162e6185b2e4d4288ef2431e2a9fb91d"
+    },
+    "ivory-pair-1": {
+      "path": "public/audio/tiles/ivory-pair-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.03793203111947826,
+      "spectral_centroid_hz": 2862.692712738644,
+      "bytes": 22536,
+      "sha256": "da54d5afc6150e9a677d5c30b60cbb94c6b60a3317461cb145b941037967520a"
+    },
+    "ivory-pair-2": {
+      "path": "public/audio/tiles/ivory-pair-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.03688496567468948,
+      "spectral_centroid_hz": 2577.986800038619,
+      "bytes": 22536,
+      "sha256": "9982eb6f8460be5d8a621b07d62de2577b3de0f2a201bce1c2736158d382df4d"
+    },
+    "bamboo-pick-1": {
+      "path": "public/audio/tiles/bamboo-pick-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.051606030912843576,
+      "spectral_centroid_hz": 897.8005505530738,
+      "bytes": 11510,
+      "sha256": "e9e7db543d1aaa7bca9e2172344046f8dd360e205db8bb26315155ce8877e0ad"
+    },
+    "bamboo-pick-2": {
+      "path": "public/audio/tiles/bamboo-pick-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.05575475824111884,
+      "spectral_centroid_hz": 1210.8946256771796,
+      "bytes": 11510,
+      "sha256": "b1d03c3634bb40bd3807f3ee166dac8740a0a03923b1170bde5359e04703df76"
+    },
+    "bamboo-pair-1": {
+      "path": "public/audio/tiles/bamboo-pair-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.055454870469220735,
+      "spectral_centroid_hz": 1219.1428777982221,
+      "bytes": 22536,
+      "sha256": "04b0990915017c23acbce54c0db130f9cffe24e7e095a6c872e8d47d64978448"
+    },
+    "bamboo-pair-2": {
+      "path": "public/audio/tiles/bamboo-pair-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.046185078849012635,
+      "spectral_centroid_hz": 1195.4852161713495,
+      "bytes": 22536,
+      "sha256": "99bb5a6a3c26c503ea3906b8751eceb534c6d235ef13a99a344fb67e74336a54"
+    },
+    "porcelain-pick-1": {
+      "path": "public/audio/tiles/porcelain-pick-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.020886104149191932,
+      "spectral_centroid_hz": 4814.253262814581,
+      "bytes": 11510,
+      "sha256": "0ab731c087a028f1c79a435ce9a6df7648298338b82b07e2620b4fec5f09eb43"
+    },
+    "porcelain-pick-2": {
+      "path": "public/audio/tiles/porcelain-pick-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.13,
+      "peak": 0.6099853515625,
+      "rms": 0.03453081353282526,
+      "spectral_centroid_hz": 4114.883581156699,
+      "bytes": 11510,
+      "sha256": "ba39939dc3421006ad0778df6761b2fc75298c3469af1651a43de5dfcc3349f3"
+    },
+    "porcelain-pair-1": {
+      "path": "public/audio/tiles/porcelain-pair-1.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.03413510801987414,
+      "spectral_centroid_hz": 5270.816554307384,
+      "bytes": 22536,
+      "sha256": "e372a674732b827677fd97019e5ce83d44704563cddaa8d94bf520581bff4aac"
+    },
+    "porcelain-pair-2": {
+      "path": "public/audio/tiles/porcelain-pair-2.wav",
+      "sample_rate": 44100,
+      "channels": 1,
+      "duration": 0.25501133786848074,
+      "peak": 0.719970703125,
+      "rms": 0.03802620347519574,
+      "spectral_centroid_hz": 4191.767132578044,
+      "bytes": 22536,
+      "sha256": "ddc0271f315d3d06282d493939cc379d2ae0d3153102fe04f8943c700f635097"
+    }
+  },
+  "bytes_total": 204276,
+  "validation": {
+    "wav_pcm16_mono": true,
+    "sample_rate": 44100,
+    "distinct_hashes": 12,
+    "silent_boundaries": true,
+    "clipped_samples": 0,
+    "decoded_files_ffmpeg": 12
+  }
+}

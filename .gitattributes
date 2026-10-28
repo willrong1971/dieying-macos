@@ -1,0 +1,8 @@
+* text=auto
+*.sh text eol=lf
+*.command text eol=lf
+*.glb binary
+*.png binary
+*.icns binary
+*.wav binary
+*.m4a binary

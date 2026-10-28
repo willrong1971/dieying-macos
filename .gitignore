@@ -1,0 +1,16 @@
+# Local build output and dependencies
+.DS_Store
+node_modules/
+.build/
+dist/
+macos/build/
+**/__pycache__/
+*.pyc
+*.log
+qa/
+
+# Local credentials and game records
+.env
+.env.*
+!.env.example
+saved-games.json

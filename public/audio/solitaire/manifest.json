@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "generated_at": "2026-10-27T08:12:12.858209+00:00",
+  "generator": "Local Qwen3-TTS via MLX",
+  "model": "Qwen3-TTS-12Hz-1.7B-CustomVoice-bf16",
+  "model_weight_bytes": 3833402589,
+  "speaker": "Serena",
+  "language": "Chinese",
+  "style": "用自然、从容、温润而清晰的成年女性普通话朗读。语速适中，停顿简洁，像安静牌桌旁的引导者。语气克制，不要儿童腔，不要夸张，不要过度气声。",
+  "temperature": 0.55,
+  "seed_base": 20261027,
+  "loudness_target_lufs": -18,
+  "network": "offline",
+  "clips": {
+    "welcome": {
+      "text": "欢迎来到叠影。找出两张相配的牌，慢慢拆开这座牌阵。",
+      "speaker": "Serena",
+      "seed": 20261027,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 5.52,
+      "rms": 0.12199806421995163,
+      "peak": 0.789337158203125,
+      "wav": {
+        "path": "public/audio/solitaire/welcome.wav",
+        "bytes": 265038,
+        "sha256": "0e4729db69467f432f085271cf55745c714a3f0131375274feea79c90aec9442"
+      },
+      "web": {
+        "path": "public/audio/solitaire/welcome.m4a",
+        "bytes": 64636,
+        "sha256": "a63657072832c4ffe9601e68567d330b315991fa984ed38d87623965e7711607",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 5.52
+      }
+    },
+    "rules": {
+      "text": "只有上方没有牌覆盖，而且左边或右边空出的牌，才能取走。万、条、筒和字牌要完全相同。花牌之间可以互配，季节牌之间也可以互配。",
+      "speaker": "Serena",
+      "seed": 20261028,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 25.76,
+      "rms": 0.10137288272380829,
+      "peak": 0.840087890625,
+      "wav": {
+        "path": "public/audio/solitaire/rules.wav",
+        "bytes": 1236558,
+        "sha256": "0d30ba5253d8aa3bccfdd33678ba20e19deba53a724a4928cef0aa6b27ba869c"
+      },
+      "web": {
+        "path": "public/audio/solitaire/rules.m4a",
+        "bytes": 281258,
+        "sha256": "3d6e251d9988ac51b4d4643bef943732fc6546d7b0cff4e62ca19bdaff9cfc67",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 25.76
+      }
+    },
+    "new-game": {
+      "text": "新牌局已摆好。先看看高处和两侧。",
+      "speaker": "Serena",
+      "seed": 20261029,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 4.0,
+      "rms": 0.12817105650901794,
+      "peak": 0.762908935546875,
+      "wav": {
+        "path": "public/audio/solitaire/new-game.wav",
+        "bytes": 192078,
+        "sha256": "94e17e8013b35088451ff45a6eb67a65951ec5b4e097b43ddea0a4f4e81fd67c"
+      },
+      "web": {
+        "path": "public/audio/solitaire/new-game.m4a",
+        "bytes": 46555,
+        "sha256": "d7a81bb0a2884e063e755aad83ea4c5e02cc0716b68e0fa1526f7a6282e7dd23",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 4.0
+      }
+    },
+    "hint": {
+      "text": "这一对可以取走。也可以再看看，有没有更好的选择。",
+      "speaker": "Serena",
+      "seed": 20261030,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 5.52,
+      "rms": 0.10903953015804291,
+      "peak": 0.839935302734375,
+      "wav": {
+        "path": "public/audio/solitaire/hint.wav",
+        "bytes": 265038,
+        "sha256": "883ed13c5fc4ad3d600619ff2b2e1a43598fabe237b99a3944b3f738c649f5d2"
+      },
+      "web": {
+        "path": "public/audio/solitaire/hint.m4a",
+        "bytes": 59417,
+        "sha256": "f1da1a28ff79ee666ceb0bc0b45f70347d9f08e5a449efec2830171ccfdb4cd6",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 5.52
+      }
+    },
+    "blocked-top": {
+      "text": "上面还有牌覆盖，先打开上面这一层。",
+      "speaker": "Serena",
+      "seed": 20261031,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 4.56,
+      "rms": 0.13635095953941345,
+      "peak": 0.81317138671875,
+      "wav": {
+        "path": "public/audio/solitaire/blocked-top.wav",
+        "bytes": 218958,
+        "sha256": "1f423e1ac1f339d3fd9bb70322a13fc2916f537510b5a38cf86d6684395e1850"
+      },
+      "web": {
+        "path": "public/audio/solitaire/blocked-top.m4a",
+        "bytes": 52719,
+        "sha256": "2d800584c6eb01deb8589a251a63d3e3144f768f0e463a189f467bd4a3fd3232",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 4.56
+      }
+    },
+    "blocked-sides": {
+      "text": "左右两侧都被挡住了。先移开一侧的牌。",
+      "speaker": "Serena",
+      "seed": 20261032,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 5.12,
+      "rms": 0.12094873934984207,
+      "peak": 0.83905029296875,
+      "wav": {
+        "path": "public/audio/solitaire/blocked-sides.wav",
+        "bytes": 245838,
+        "sha256": "671cfe04281d23d821cde5e13343d756306478f4f9417ed7ef476a6eee97a7d4"
+      },
+      "web": {
+        "path": "public/audio/solitaire/blocked-sides.m4a",
+        "bytes": 60739,
+        "sha256": "125390c11b3b3ebe039438d7af3324ac790f31b6dd094a34625648b10f97e985",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 5.12
+      }
+    },
+    "mismatch": {
+      "text": "这两张不相配，再看一看。",
+      "speaker": "Serena",
+      "seed": 20261033,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 2.48,
+      "rms": 0.12380976229906082,
+      "peak": 0.70623779296875,
+      "wav": {
+        "path": "public/audio/solitaire/mismatch.wav",
+        "bytes": 119118,
+        "sha256": "9bf5353f25bc9da692d5b5eb45a3a1cab553de4186d75196e048baa191346c9e"
+      },
+      "web": {
+        "path": "public/audio/solitaire/mismatch.m4a",
+        "bytes": 29458,
+        "sha256": "0adbb1e49439cdc04b6be7b8f4b215427a8c4944ccf20db9000437233f0a922f",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 2.48
+      }
+    },
+    "no-moves": {
+      "text": "暂时没有可配对的牌。可以撤销几步，换一种次序，也可以洗牌。",
+      "speaker": "Serena",
+      "seed": 20261034,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 7.52,
+      "rms": 0.1069427952170372,
+      "peak": 0.749786376953125,
+      "wav": {
+        "path": "public/audio/solitaire/no-moves.wav",
+        "bytes": 361038,
+        "sha256": "5d83ca05995113f93ff84d7919360cfe99833a1c1eb1cf26134bd77bf8b4b2f6"
+      },
+      "web": {
+        "path": "public/audio/solitaire/no-moves.m4a",
+        "bytes": 87245,
+        "sha256": "6f72581f866529ea0e293edc9c5b1f0fe2fd0613a7d64ee2fe2892fd85f89c53",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 7.52
+      }
+    },
+    "shuffle": {
+      "text": "剩余牌已重新排列。这次的排列有解。",
+      "speaker": "Serena",
+      "seed": 20261035,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 6.56,
+      "rms": 0.10962293297052383,
+      "peak": 0.840057373046875,
+      "wav": {
+        "path": "public/audio/solitaire/shuffle.wav",
+        "bytes": 314958,
+        "sha256": "8fd2c0c0a5f2ca300e3dc9d4973c337204a324d0a63bcb4c756491c0257ea501"
+      },
+      "web": {
+        "path": "public/audio/solitaire/shuffle.m4a",
+        "bytes": 69807,
+        "sha256": "94571cdaf56a6e5c0a237f7c698353dfb0d2a39ef9b2c49505f47087244d3518",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 6.56
+      }
+    },
+    "win": {
+      "text": "整座牌阵已经清空。这一局，拆得漂亮。",
+      "speaker": "Serena",
+      "seed": 20261036,
+      "sample_rate": 24000,
+      "channels": 1,
+      "duration": 5.04,
+      "rms": 0.11475616693496704,
+      "peak": 0.73321533203125,
+      "wav": {
+        "path": "public/audio/solitaire/win.wav",
+        "bytes": 241998,
+        "sha256": "ee688c8b5f664265feb2abaa2bc6a37e166d07b4b7caa6d50b7d48891d7bf26b"
+      },
+      "web": {
+        "path": "public/audio/solitaire/win.m4a",
+        "bytes": 56588,
+        "sha256": "226c2ab72fe2140f745ca9eed4f01bb07f46ecb8a5a65a8d093b11fbf219df8f",
+        "codec": "aac",
+        "sample_rate": 24000,
+        "channels": 1,
+        "duration": 5.04
+      }
+    }
+  },
+  "model_load_count": 1
+}

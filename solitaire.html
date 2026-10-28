@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102c27"><meta name="description" content="经典叠牌麻将消除。看清遮挡，选择次序，慢慢拆开一整座牌阵。">
+  <title>叠影 · 麻将对对碰</title>
+  <link rel="icon" href="/public/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="/src/solitaire.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="/solitaire.html" aria-label="叠影，麻将对对碰"><span class="seal" aria-hidden="true">疊</span><span>叠影<small>麻将对对碰</small></span></a>
+    <div class="masthead-note">看清一张，想远一步。</div>
+    <nav><a href="/">数学工坊 ↗</a><button id="voice-button" class="quiet voice-button" aria-pressed="false" title="开启本地模型生成的普通话配音">♪ 开启配音</button><button id="rules-button" class="quiet">玩法说明 <span class="key">?</span></button></nav>
+  </header>
+  <main>
+    <div class="game-heading"><div><span class="eyebrow">MAHJONG SOLITAIRE</span><h1 id="layout-title">经典龟形</h1><p id="layout-description">从边缘入手，逐层拆开。</p></div><div class="heading-actions"><button id="immersive-button" class="immersive-enter" aria-pressed="false" title="隐藏所有菜单，让牌桌占满屏幕 · I">⛶ 沉浸牌桌</button><button id="deal-button" class="deal-code" title="输入编号可重玩同一局">牌局 <span id="deal-number">—</span></button><button id="new-button" class="primary">＋ 新牌局</button></div></div>
+    <section class="table-shell" aria-label="麻将对对碰牌桌">
+      <div class="table-top"><div class="stats"><div><span>剩余牌</span><strong><b id="remaining-count">144</b><small id="total-count"> / 144</small></strong></div><div><span>可配对</span><strong id="pair-count">—</strong></div><div><span>用时</span><strong id="timer">00:00</strong></div></div><div class="table-top-right"><span class="save-status" id="save-status">本机自动续局</span><button id="tile-sound-button" class="sound-toggle" aria-pressed="true" aria-label="关闭碰牌声" title="碰牌声已开">♬ <span>牌声</span></button><button id="pause-button" class="icon-button" aria-label="暂停游戏" title="暂停 P">Ⅱ</button></div></div>
+      <div class="play-area">
+        <div class="board-stage" id="board-stage"><div class="table-ornament" aria-hidden="true"><span>疊</span></div><canvas id="solitaire-canvas" aria-label="立体麻将牌阵。点击选牌，左键拖动旋转视角，滚轮缩放，Shift加拖动平移。按0复位视角。" title="左键拖动旋转 · 滚轮缩放 · Shift加拖动平移 · 0复位"></canvas><div id="fallback-board" hidden></div><span id="selected-tile-marker" class="selected-tile-marker" aria-hidden="true" hidden>✓ 已选</span><p id="board-feedback" class="board-feedback" role="status" aria-live="polite" hidden></p><div class="loading-panel" id="loading-panel"><span class="loading-seal">疊</span><p id="loading-copy">正在铺好立体牌桌…</p><progress id="load-progress" max="100" hidden></progress></div><div id="deadlock-panel" class="deadlock-panel" role="region" aria-label="僵局处理" hidden><div class="deadlock-copy"><span aria-hidden="true">⤨</span><div><h2>暂无可配对的牌</h2><p>保留剩余牌，洗牌后继续这一局。</p></div></div><div class="deadlock-actions"><button id="deadlock-shuffle" class="primary">洗牌继续 <span class="key">S</span></button><button id="deadlock-undo">↶ 撤销一步</button></div></div><div class="pause-panel" id="pause-panel" hidden><span class="eyebrow">稍作停留</span><h2>牌局已暂停</h2><p>这一桌牌，等你回来。</p><button id="resume-button" class="primary">继续这一局</button></div></div>
+        <aside class="table-aside">
+          <section class="material-section"><h2>牌的材质</h2><div class="materials" role="group" aria-label="牌的材质"><button data-material="ivory" aria-pressed="true"><i class="swatch ivory"></i><span>暖象牙</span><b>✓</b></button><button data-material="bamboo" aria-pressed="false"><i class="swatch bamboo"></i><span>竹制</span><b>✓</b></button><button data-material="porcelain" aria-pressed="false"><i class="swatch porcelain"></i><span>白瓷</span><b>✓</b></button></div></section>
+          <section class="selection-section"><h2>当前选择</h2><div id="selected-preview" class="selection-empty"><span>两张相配，一起移开。</span></div><p id="selection-caption">先观察高处和两侧的牌。</p></section>
+          <section class="rule-note"><span class="rule-mark" aria-hidden="true">↔</span><p><strong>上面没有牌</strong><br>且<strong>左边或右边空出</strong><br>才能取走。</p><button id="free-button" class="text-action" aria-pressed="false">标出可取牌 <span class="key">F</span></button></section>
+          <div class="session-note"><span id="assist-count">提示 0 · 洗牌 0</span><span id="render-status">立体牌面准备中</span></div>
+        </aside>
+      </div>
+      <div class="table-bottom"><div class="tools"><button id="hint-button" title="提示 H">◈ 提示 <span class="key">H</span></button><button id="undo-button" title="撤销 Z" disabled>↶ 撤销 <span class="key">Z</span></button><button id="shuffle-button" title="洗牌 S">⤨ 洗牌</button><button id="restart-button">↻ 重玩本局</button></div><div class="view-tools"><button id="zoom-out" aria-label="缩小牌阵">−</button><button id="reset-view" title="恢复初始俯视、缩放与位置 · 0">视角复位</button><button id="zoom-in" aria-label="放大牌阵">＋</button><button id="fullscreen-button" aria-label="进入沉浸全屏" title="沉浸牌桌 · I">⛶</button></div></div>
+    </section>
+    <div class="voice-caption" id="voice-caption" hidden><span aria-hidden="true">♪</span><span id="voice-subtitle"></span><button id="voice-stop" aria-label="停止当前配音">×</button></div>
+    <div class="below-table"><p id="message" role="status" aria-live="polite">相同牌面配对消除。花牌彼此相配，季牌彼此相配。</p><button id="keyboard-button" aria-expanded="false" aria-controls="keyboard-panel">键盘选牌 ⌨</button></div>
+    <section id="keyboard-panel" class="keyboard-panel" hidden aria-label="可取牌列表"><div><h2>可取牌</h2><p>用 Tab 选择，按 Enter 取牌。牌面名称后是层数与位置。</p></div><div id="free-tiles" class="free-tiles"></div></section>
+    <footer><span>一局牌，一段安静的推敲。</span><span>初始牌局均有解 · 取牌次序决定后续局面</span></footer>
+  </main>
+  <button id="exit-immersive" class="immersive-exit" aria-label="退出沉浸模式，返回菜单" title="退出沉浸 · Esc" hidden>↙ 返回菜单 <span>Esc</span></button>
+  <dialog id="game-dialog"></dialog>
+  <audio id="voice-audio" preload="none" hidden></audio>
+  <script>
+    if(location.protocol==='file:'){
+      document.body.innerHTML='<main style="max-width:640px;margin:10vh auto;padding:30px;font:16px/1.9 system-ui;color:#e9e4d0"><h1>从启动文件进入牌桌</h1><p>请在 MaJiang 文件夹中双击“启动数学工坊.command”，保留启动窗口，然后点击下面的入口。</p><p><a style="color:#e6ca8b" href="http://localhost:8787/solitaire.html">进入经典麻将对对碰 →</a></p></main>';
+    }else{
+      import('/src/solitaire.js').catch(error=>{console.error('Solitaire startup:',error);document.querySelector('#loading-copy').textContent='牌桌暂未顺利打开，请刷新页面重试。';});
+    }
+  </script>
+  <noscript><p>请开启 JavaScript，并从 http://localhost:8787/solitaire.html 进入牌桌。</p></noscript>
+</body>
+</html>
