@@ -20,7 +20,7 @@
   const restoreTag = 'dieying:__RESTORE_TOKEN__';
   const shouldRestore = window.name !== restoreTag;
   window.name = restoreTag;
-  const allowed = new Set(['mahjong-solitaire:v1', 'mahjong-solitaire:voice', 'mahjong-solitaire:tile-sounds', 'mahjong-math-workshop:v1', 'mahjong-math-workshop:v1:recovery']);
+  const allowed = new Set(['mahjong-solitaire:v1', 'mahjong-solitaire:voice', 'mahjong-solitaire:tile-sounds', 'mahjong-math-workshop:v1', 'mahjong-math-workshop:v1:recovery', 'mahjong-math-workshop:sounds']);
   const send = payload => { try { window.webkit.messageHandlers.gameStore.postMessage(payload); } catch {} };
   let storage;
   try {

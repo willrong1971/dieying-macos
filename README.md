@@ -1,6 +1,6 @@
 # 叠影 · Mahjong Solitaire for macOS
 
-独立运行的 Mac 立体麻将对对碰。AppKit 提供原生窗口和菜单，macOS 自带 WebKit 绘制 3D 牌阵。模型、贴图、普通话配音和碰牌声全部内置，可离线使用，无需打开浏览器，也不需要本地 HTTP 服务。
+在 Mac 上独立运行的立体麻将应用，包含经典对对碰、数学教学工坊和认牌馆。AppKit 提供原生窗口和菜单，macOS 自带 WebKit 绘制 3D 牌阵。模型、贴图、普通话配音和音效均可离线使用，无需打开浏览器，也不需要本地 HTTP 服务。
 
 ![叠影 Mac 独立版](docs/images/macos.png)
 
@@ -10,7 +10,9 @@
 - 暖象牙、竹制、白瓷三种材质，每套包含 42 种立体牌面。
 - 鼠标点击选牌，拖动转动视角，滚轮缩放；支持沉浸牌桌与 Mac 原生全屏。
 - 普通话配音、按材质区分的碰牌声，开关分别保存。
-- 自动保存牌局，退出后重开继续；另含 16 种麻将数学教学小游戏。
+- 自动保存牌局，退出后重开可以续局。
+- 数学教学工坊有 16 个小游戏、69 个关卡。牌面随窗口放大，桌面支持沉浸模式。点牌、提交和判定都有短音效，可在工坊设置中关闭。
+- 认牌馆展示 42 种凹刻牌面，可旋转、翻面、近看刻纹，提供中英名称、拼音和认牌练习。
 
 ## 编译并安装
 
@@ -49,7 +51,7 @@ cd dieying-macos
 | ⌘P | 暂停 / 继续 |
 | ⌘T / ⌘Z / ⌘R | 提示 / 撤销 / 洗牌 |
 | ⌘0 | 视角复位 |
-| ⌘1 / ⌘2 | 对对碰 / 数学工坊 |
+| ⌘1 / ⌘2 / ⌘3 | 对对碰 / 数学工坊 / 认牌馆 |
 | ⌃⌘F | 原生全屏 |
 
 本机自动存档位于 `~/Library/Application Support/DieYing/saved-games.json`，与网页浏览器的存档分别保存。
@@ -59,7 +61,7 @@ cd dieying-macos
 - `macos/Sources/`：AppKit 窗口、菜单、WebKit 资源协议与原生存档。
 - `macos/Resources/`：应用图标和 JavaScript 存档桥接。
 - `macos/scripts/prepare-assets.py`：将运行资源复制入 App，并生成 SHA-256 清单。
-- `src/`、`solitaire.html`、`index.html`：3D 牌桌、配对引擎与数学工坊。
+- `src/`、`solitaire.html`、`index.html`、`tile-studio.html`：3D 牌桌、配对引擎、数学工坊与认牌馆。
 - `exports/v2/game/`：三套自包含 GLB 牌模。
 - `public/tiles/`、`public/audio/`：牌面预览、离线语音与牌声。
 - `vendor/three/`：随项目保存的 Three.js。

@@ -64,6 +64,7 @@ final class GameViewController: NSViewController, WKNavigationDelegate, WKUIDele
 
     func showSolitaire() { load("/solitaire.html") }
     func showWorkshop() { pendingNewGame = false; load("/index.html") }
+    func showGallery() { pendingNewGame = false; load("/tile-studio.html") }
     private func load(_ path: String) {
         refreshBridge()
         webView.load(URLRequest(url: URL(string: "mahjong://app" + path)!))

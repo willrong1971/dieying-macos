@@ -6,6 +6,7 @@ import { TileRenderer } from './tiles3d.js';
 import { validateProfile } from './records.js';
 import {renderWorkshop,renderCatalog,renderTask,renderLevels,renderSettings} from './workshop-view.js';
 import {ImmersiveMode} from './solitaire-immersive.js';
+import {WorkshopSounds,workshopFeedbackCue} from './workshop-sounds.js';
 
 const games=[...gamesA,...gamesB,...gamesC];
 const byId=new Map(games.map(g=>[g.id,g]));
@@ -27,6 +28,9 @@ function showRenderStatus(status){
   if(status.state==='ready')document.documentElement.dataset.modelCount=String(status.count);
 }
 const renderer=new TileRenderer(document.querySelector('#tile-canvas'),showRenderStatus);
+const sounds=new WorkshopSounds();
+if(sounds.enabled)sounds.preload(profile.material);
+addEventListener('pagehide',()=>sounds.stop());
 const immersive=new ImmersiveMode({
   exitButton:document.querySelector('#workshop-immersive-exit'),
   onChange(active){
@@ -46,19 +50,14 @@ function remember(){if(current&&state){profile.states[stateKey()]={state:cp(stat
 function render({resetScroll=false}={}){
   setTilePreviewTheme(profile.material);
   const scrollYBefore=scrollY;
-  // Larger collections and cabinets scroll within the table. Keep their place
-  // when a move rebuilds the DOM, just as we keep the table's own scroll.
+  // A long lesson uses one scroll surface. Preserve its position after a move.
   const surface=app.querySelector('#game-surface');
-  const scrollPositions=resetScroll||!surface?[]:[surface,...surface.querySelectorAll('*')].filter(el=>el.scrollLeft||el.scrollTop).map(el=>{
-    const path=[];let node=el;
-    while(node!==surface){path.unshift(`${node.tagName.toLowerCase()}:nth-child(${[...node.parentElement.children].indexOf(node)+1})`);node=node.parentElement;}
-    return {selector:'#game-surface'+(path.length?' > '+path.join(' > '):''),tag:el.tagName,kind:el.classList[0],left:el.scrollLeft,top:el.scrollTop};
-  });
+  const tableScroll=resetScroll||!surface?null:{left:surface.scrollLeft,top:surface.scrollTop};
   const focus=document.activeElement;
   const marker=focus?.dataset?{global:focus.dataset.global,action:focus.dataset.action,value:focus.dataset.value,model:focus.dataset.modelId}:null;
   app.innerHTML=renderWorkshop({games,current,level,state,profile,historyCount:history.length,futureCount:future.length,helpers:h});
   syncImmersiveButton();
-  for(const position of scrollPositions){const el=document.querySelector(position.selector);if(el&&el.tagName===position.tag&&(!position.kind||el.classList.contains(position.kind))){el.scrollLeft=position.left;el.scrollTop=position.top;}}
+  if(tableScroll)app.querySelector('#game-surface')?.scrollTo(tableScroll);
   scrollTo({top:scrollYBefore,behavior:'auto'});
   if(marker&&(marker.global||marker.action)){
     const controls=[...app.querySelectorAll('button:not(:disabled),input,select')];
@@ -91,8 +90,11 @@ function takeAction(type,value,options={}){
   if(!current){if(type==='hero')toast('观察这张牌的花色与数字。到「三张成族」里试一试吧。');return;}
   const before=cp(state);
   try{
-    const next=current.act(cp(state),{type,value});if(!next)return;
+    const draft=cp(state),previousFeedback=draft.feedback;
+    const next=current.act(draft,{type,value});if(!next)return;
     commitTransition(next,before,options);
+    const cue=workshopFeedbackCue(type,previousFeedback,next.feedback);
+    void sounds.playAction({theme:profile.material,contact:options.contact,cue});
   }catch(error){console.error(current.id,type,error);toast('这一步暂时没有完成，原来的摆法已保留。');state=before;}
 }
 const dropActions=['place','cell','slot','put','box','assign','fill','sym-cell','magic-cell'];
@@ -102,7 +104,13 @@ function dropTarget(element){
 }
 function moveTile(from,target){
   if(!current||!target)return;const before=cp(state);
-  try{let next=cp(state);if(String(next.selected)!==String(from.value))next=current.act(next,from);next=current.act(next,{type:target.dataset.action,value:target.dataset.value});commitTransition(next,before);}
+  try{
+    let next=cp(state);if(String(next.selected)!==String(from.value))next=current.act(next,from);
+    const {action:type,value}=target.dataset,previousFeedback=next.feedback;
+    next=current.act(next,{type,value});if(!next)return;
+    commitTransition(next,before);
+    void sounds.playAction({theme:profile.material,contact:'pair',cue:workshopFeedbackCue(type,previousFeedback,next.feedback)});
+  }
   catch{state=before;toast('没有移动成功，原来的摆法已保留。');}
 }
 function modal(title,body,footer='',kind=''){
@@ -120,7 +128,7 @@ function modal(title,body,footer='',kind=''){
 }
 function catalog(){modal('选择玩法',renderCatalog({games,profile,filter}),'','catalog-dialog');}
 function task(){modal('目标与提示',renderTask({game:current,level,state,profile,hintIndex,explanation,helpers:h}),'','task-dialog');}
-function settings(){modal('材质与记录',renderSettings({profile,renderStatus}),'','settings-dialog');}
+function settings(){modal('工坊设置',renderSettings({profile,renderStatus,soundEnabled:sounds.enabled}),'','settings-dialog');}
 function journal(){modal('我的发现',profile.discoveries.length?`<p class="small-text">每一次新的尝试，都值得留下来。</p><div class="journal-list">${profile.discoveries.slice().reverse().map(d=>`<article><span>${escape(d.gameId)} · 第${d.level+1}关</span><h3>${escape(d.title)}</h3><p>${escape(d.explanation)}</p>${d.note?`<blockquote>${escape(d.note)}</blockquote>`:''}<small>${new Date(d.time).toLocaleDateString('zh-CN')} ${d.viewedExplanation?'· 看过思考方法':'· 自己动手的发现'}</small></article>`).join('')}</div>`:'<div class="empty-journal"><span>✧</span><h3>发现，从第一张牌开始。</h3><p>完成一关后，你的方法就会留在这里。</p></div>','<button class="btn-secondary" data-global="export">导出全部记录</button>');}
 function download(){remember();const blob=new Blob([JSON.stringify({app:'mahjong-math-workshop',exportedAt:new Date().toISOString(),profile},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='麻将数学工坊_我的发现.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('发现记录已导出。');}
 async function globalAction(action,value){
@@ -132,7 +140,11 @@ async function globalAction(action,value){
     case 'task':task();break;
     case 'settings':settings();break;
     case 'immersive':void immersive.toggle();break;
-    case 'material':if(['ivory','bamboo','porcelain'].includes(value)){profile.material=value;persist();render();settings();renderer.setTheme(value);}break;
+    case 'material':if(['ivory','bamboo','porcelain'].includes(value)){profile.material=value;persist();render();settings();renderer.setTheme(value);if(sounds.enabled)sounds.preload(value);}break;
+    case 'workshop-sound':
+      sounds.toggle();settings();
+      if(sounds.enabled){sounds.preload(profile.material);void sounds.playAction({cue:'submit'});}
+      break;
     case 'retry3d':renderer.setTheme(profile.material);break;
     case 'level':dialog.close();openGame(current.id,Number(value));break;
     case 'next':dialog.close();openGame(current.id,level+1);break;
@@ -153,7 +165,13 @@ document.addEventListener('click',e=>{
   if(suppressDragClick){e.preventDefault();e.stopPropagation();return;}
   if(e.target.closest('[data-close-dialog]')){dialog.close();return;}
   const global=e.target.closest('[data-global]');if(global){globalAction(global.dataset.global,global.dataset.value);return;}
-  const target=e.target.closest('[data-action]');if(target&&!['INPUT','SELECT','TEXTAREA'].includes(target.tagName)){e.preventDefault();takeAction(target.dataset.action,target.dataset.value);}
+  const target=e.target.closest('[data-action]');
+  if(target&&!target.matches(':disabled,input,select,textarea')){
+    e.preventDefault();
+    const {action:type,value}=target.dataset;
+    const contact=target.matches('.tile')?'pick':['add','draw','take'].includes(type)?'pair':null;
+    takeAction(type,value,{contact});
+  }
 });
 app.addEventListener('change',e=>{const el=e.target;if(el.matches('input[data-action]:not([type="number"]),select[data-action]'))takeAction(el.dataset.action,el.type==='checkbox'?(el.checked?'1':'0'):el.value);});
 document.addEventListener('input',e=>{
@@ -194,7 +212,7 @@ document.querySelector('#import-file').addEventListener('change',async e=>{
     if(file.size>5_000_000)throw new Error('too large');const data=JSON.parse(await file.text());const p=data.profile;
     if(data.app!=='mahjong-math-workshop')throw new Error('format');
     const imported=validateProfile(p,games,h);
-    profile=imported;current=null;state=null;persist();dialog.close();openGame(byId.has(profile.lastGame)?profile.lastGame:'G08',0,{replace:true});renderer.setTheme(profile.material);toast('发现记录已导入。');
+    profile=imported;current=null;state=null;persist();dialog.close();openGame(byId.has(profile.lastGame)?profile.lastGame:'G08',0,{replace:true});renderer.setTheme(profile.material);if(sounds.enabled)sounds.preload(profile.material);toast('发现记录已导入。');
   }catch{toast('这份记录无法导入，请选择工坊导出的完整 JSON 记录。');}
   e.target.value='';
 });

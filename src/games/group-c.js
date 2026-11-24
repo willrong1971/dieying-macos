@@ -56,13 +56,19 @@ const G11 = {
   },
   view(s, h) {
     const row = (bits, editable) => `<div class="tile-pool">${bits.map((back, i) => h.tile(dot(i % 9 + 1), {action: editable ? 'flip' : 'none', value: i, disabled: !editable, back, selected: editable && s.pending === i, tag: `第${i + 1}张`, label: `第${i + 1}张，${back ? '背面' : '正面'}`})).join('')}</div>`;
-    return `<section class="soft-panel"><h3 class="subheading">要到达的目标</h3>${row(s.target, false)}</section>
-      <h3 class="subheading">你的桌面 · 已走 ${s.moves.length} 步</h3>${row(s.bits, true)}
-      <p class="formula">现在有 ${s.bits.filter(Boolean).length} 张背面朝上</p>
-      ${s.pending !== null ? rules(`已选第${s.pending + 1}张，再选另一张才会翻面。`) : rules('每一步恰好翻两张，可反复翻同一张，两个位置不必相邻。')}
-      ${s.mode === 'judge' ? `<div class="soft-panel"><h3 class="subheading">我的判断</h3><div class="choice-row">${choice(h, '可以做到', 'judge', 'yes', s.judgment === 'yes')}${choice(h, '做不到', 'judge', 'no', s.judgment === 'no')}</div><p>我的理由是：</p><div class="choice-row">${choice(h, '背面张数只会增加2、减少2或不变', 'reason', 'parity', s.reason === 'parity')}${choice(h, '我试了几次没有成功', 'reason', 'tried', s.reason === 'tried')}${choice(h, '因为这副牌有六张', 'reason', 'six', s.reason === 'six')}</div></div>` : ''}
-      ${actionRow(h.button(s.mode === 'judge' ? '提交判断与理由' : '检查局面', 'check', '', {primary: true}))}
-      ${s.moves.length ? `<div class="soft-panel"><h3 class="subheading">我的步骤</h3><p>${s.moves.map((m, i) => `第${i + 1}步：翻第${m[0] + 1}、${m[1] + 1}张`).join('；')}</p></div>` : ''}`;
+    return `<div class="lesson-layout flip-layout" style="--flip-count:${s.bits.length};--flip-narrow-count:${Math.ceil(s.bits.length / 2)}">
+      <div class="lesson-board c-stack flip-board">
+        <section class="c-panel c-stack"><h3 class="subheading">要到达的目标</h3>${row(s.target, false)}</section>
+        <section class="c-stack"><h3 class="subheading">你的桌面 · 已走 ${s.moves.length} 步</h3>${row(s.bits, true)}</section>
+      </div>
+      <div class="lesson-side c-stack">
+        <p class="formula">现在有 ${s.bits.filter(Boolean).length} 张背面朝上</p>
+        ${s.pending !== null ? rules(`已选第${s.pending + 1}张，再选另一张才会翻面。`) : rules('每一步恰好翻两张，可反复翻同一张，两个位置不必相邻。')}
+        ${s.mode === 'judge' ? `<section class="c-panel c-stack"><h3 class="subheading">我的判断</h3><div class="choice-row">${choice(h, '可以做到', 'judge', 'yes', s.judgment === 'yes')}${choice(h, '做不到', 'judge', 'no', s.judgment === 'no')}</div><p>我的理由是：</p><div class="choice-row c-list">${choice(h, '背面张数只会增加2、减少2或不变', 'reason', 'parity', s.reason === 'parity')}${choice(h, '我试了几次没有成功', 'reason', 'tried', s.reason === 'tried')}${choice(h, '因为这副牌有六张', 'reason', 'six', s.reason === 'six')}</div></section>` : ''}
+        ${actionRow(h.button(s.mode === 'judge' ? '提交判断与理由' : '检查局面', 'check', '', {primary: true}))}
+      </div>
+      ${s.moves.length ? `<section class="lesson-wide c-panel c-stack"><h3 class="subheading">我的步骤</h3><ol class="c-history">${s.moves.map(m => `<li>翻第${m[0] + 1}、${m[1] + 1}张</li>`).join('')}</ol></section>` : ''}
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'flip') {
@@ -139,15 +145,30 @@ const G12 = {
     const known = new Map(s.bag.map(e => [e.id, e]));
     const pairHtml = ids => ids.map(id => {const e = known.get(id); return h.tile(dot(e.value), {disabled: true, small: true, tag: s.showLabels ? e.label : String(e.value), label: s.showLabels ? e.label : `数字${e.value}`});}).join('');
     const keys = Object.keys(s.exact).sort();
-    return `<div class="soft-panel"><h3 class="subheading">先留下一个预测</h3><div class="choice-row">${choice(h, '每类都一样容易出现', 'predict', 'equal', s.prediction === 'equal')}${choice(h, '有些结果更容易出现', 'predict', 'different', s.prediction === 'different')}</div></div>
-      <h3 class="subheading">牌袋里的实体牌 · 每轮结束全部放回</h3><div class="tile-pool">${s.bag.map(e => h.tile(dot(e.value), {action: 'sample-pick', value: e.id, selected: s.chosen.includes(e.id), tag: s.showLabels ? e.label : String(e.value), label: `选择样本牌${e.label}`})).join('')}</div>
-      ${actionRow(h.button('抽一轮', 'draw', '1', {primary: true}) + h.button('连续抽10轮', 'draw', '10') + h.button(s.showLabels ? '暂时隐藏甲乙' : '显示甲乙身份', 'labels'))}
-      ${s.last.length ? `<div class="soft-panel"><h3 class="subheading">最近一轮</h3><div class="tile-pool">${pairHtml(s.last)}</div><p>本轮结束，这两张已放回牌袋。</p></div>` : ''}
-      <h3 class="subheading">已经实验 ${s.rounds} 轮 · 本关至少 ${s.goalRounds} 轮</h3>
-      <div class="collection-grid">${keys.map(key => `<div class="collection-card"><strong>${h.escape(key.split('').join('＋'))}</strong><div style="height:8px;background:#e6e9de;border-radius:8px;margin:9px 0"><div style="width:${s.rounds ? s.counts[key] / s.rounds * 100 : 0}%;height:100%;background:#47745c;border-radius:8px"></div></div><p>${s.counts[key]} 次 · ${s.rounds ? (100 * s.counts[key] / s.rounds).toFixed(1) : '0'}%</p></div>`).join('')}</div>
-      <div class="soft-panel"><h3 class="subheading">把实体样本列齐 · ${s.collected.length}/${s.samples.length}</h3><p>在牌袋里点选两张不同的牌，再选它属于哪一类。相同数字的甲、乙仍是不同实体。</p><div class="choice-row">${keys.map(key => choice(h, key.split('').join('与'), 'group', key, s.group === key)).join('')}</div>${actionRow(h.button('收录这一个实体样本', 'sample-submit', '', {primary: true}))}<div class="collection-grid">${s.collected.map(id => {const sample = s.samples.find(p => p.id === id); return `<div class="collection-card"><p>${sample.entities.map(e => h.escape(known.get(e).label)).join(' ＋ ')} → ${h.escape(sample.key)}</p></div>`;}).join('')}</div></div>
-      <h3 class="subheading">为什么能说明机会大小？</h3><div class="choice-row">${choice(h, '数等可能的实体组合，再归到数字结果', 'reason', 'entities', s.reason === 'entities')}${choice(h, '只看刚才哪类抽得多', 'reason', 'frequency', s.reason === 'frequency')}${choice(h, '有几类就平均分给每类', 'reason', 'classes', s.reason === 'classes')}</div>
-      ${actionRow(h.button('整理实验发现', 'check', '', {primary: true}))}`;
+    return `<div class="lesson-layout lab-layout" style="--bag-count:${s.bag.length}">
+      <div class="lesson-board c-stack">
+        <section class="c-stack"><h3 class="subheading">先留下一个预测</h3><div class="choice-row">${choice(h, '每类都一样容易出现', 'predict', 'equal', s.prediction === 'equal')}${choice(h, '有些结果更容易出现', 'predict', 'different', s.prediction === 'different')}</div></section>
+        <section class="c-panel c-stack"><h3 class="subheading">牌袋里的实体牌 · 每轮结束全部放回</h3>
+          <div class="tile-pool lab-bag">${s.bag.map(e => h.tile(dot(e.value), {action: 'sample-pick', value: e.id, selected: s.chosen.includes(e.id), tag: s.showLabels ? e.label : String(e.value), label: `选择样本牌${e.label}`})).join('')}</div>
+          ${actionRow(h.button('抽一轮', 'draw', '1', {primary: true}) + h.button('连续抽10轮', 'draw', '10') + h.button(s.showLabels ? '暂时隐藏甲乙' : '显示甲乙身份', 'labels'))}</section>
+        <section class="c-stack"><h3 class="subheading">已经实验 ${s.rounds} 轮 · 本关至少 ${s.goalRounds} 轮</h3>
+          <div class="collection-grid lab-frequencies">${keys.map(key => {
+            const percent = s.rounds ? 100 * s.counts[key] / s.rounds : 0;
+            return `<div class="collection-card"><strong>${h.escape(key.split('').join('＋'))}</strong><span class="lab-bar" style="--frequency:${percent}%" aria-hidden="true"></span><p>${s.counts[key]} 次 · ${s.rounds ? percent.toFixed(1) : '0'}%</p></div>`;
+          }).join('')}</div>
+          ${s.last.length ? `<div class="lab-latest"><div class="tile-pool">${pairHtml(s.last)}</div><div><h3 class="subheading">最近一轮</h3><p class="small-text">本轮结束，这两张已放回牌袋。</p></div></div>` : ''}
+        </section>
+      </div>
+      <div class="lesson-side c-stack">
+        <section class="c-panel c-stack"><h3 class="subheading">把实体样本列齐 · ${s.collected.length}/${s.samples.length}</h3><p>在牌袋里点选两张不同的牌，再选它属于哪一类。相同数字的甲、乙仍是不同实体。</p>
+          <div class="choice-row lab-sample-options">${keys.map(key => choice(h, key.split('').join('与'), 'group', key, s.group === key)).join('')}</div>
+          ${actionRow(h.button('收录这一个实体样本', 'sample-submit', '', {primary: true}))}
+          ${s.collected.length ? `<div class="collection-grid lab-samples">${s.collected.map(id => {const sample = s.samples.find(p => p.id === id); return `<div class="collection-card"><p>${sample.entities.map(e => h.escape(known.get(e).label)).join(' ＋ ')} → ${h.escape(sample.key)}</p></div>`;}).join('')}</div>` : ''}
+        </section>
+        <section class="c-stack"><h3 class="subheading">为什么能说明机会大小？</h3><div class="choice-row c-list">${choice(h, '数等可能的实体组合，再归到数字结果', 'reason', 'entities', s.reason === 'entities')}${choice(h, '只看刚才哪类抽得多', 'reason', 'frequency', s.reason === 'frequency')}${choice(h, '有几类就平均分给每类', 'reason', 'classes', s.reason === 'classes')}</div>
+          ${actionRow(h.button('整理实验发现', 'check', '', {primary: true}))}</section>
+      </div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'predict') {s.prediction = String(a.value); s.complete = false; labProgress(s); return feedback(s, '预测已记录。即使后来改变看法，也保留这次思考。');}
@@ -230,7 +251,7 @@ function sideTiles(a, b, h, split) {
   if (split && b > split) {numbers.push(split); b -= split;}
   while (b > 0) {numbers.push(Math.min(9, b)); b -= Math.min(9, b);}
   parts.push(...numbers.map(n => h.tile(dot(n), {disabled: true, label: `数值${n}`})));
-  return parts.length ? `<div class="tile-pool">${parts.join('<span class="formula" aria-hidden="true">＋</span>')}</div>` : '<p class="formula">0</p>';
+  return parts.length ? `<div class="tile-pool equation-terms" style="--term-count:${parts.length}">${parts.join('<span class="formula" aria-hidden="true">＋</span>')}</div>` : '<p class="formula">0</p>';
 }
 const G13 = {
   id: 'G13', title: '白板天平', kicker: '同一个符号，藏着同一个数', description: '同时改变等式两边，找出白板里的秘密。', grade: '小学高段 · 初中', category: 'explore', tags: ['未知数', '等式'],
@@ -245,12 +266,29 @@ const G13 = {
   },
   view(s, h) {
     const e = s.equation; const evaluated = s.value === null ? null : equationValue(s.original, s.value);
-    return `<p class="small-text">原式：${h.escape(eqText(s.original))}</p><div class="board-grid" style="--cols:2"><section class="soft-panel"><h3 class="subheading">左边</h3>${sideTiles(e.la, e.lb, h, 0)}</section><section class="soft-panel"><h3 class="subheading">右边</h3>${sideTiles(e.ra, e.rb, h, s.splitRight ? s.operationValue : 0)}</section></div><p class="formula">${h.escape(eqText(e))}</p>
-      <div class="soft-panel"><h3 class="subheading">对两边做同样的操作</h3><label>操作数 <input class="number-input" type="number" min="1" max="9" value="${s.operationValue}" data-action="op-number" aria-label="两边操作使用的数"></label>${actionRow(h.button('两边都减这个数', 'subtract') + h.button('两边平均分这些份', 'divide') + h.button('两边各拿走一张白板', 'remove-x') + h.button('展开右边的数字', 'split'))}${h.button('为什么不能只减左边？', 'one-side')}</div>
-      <h3 class="subheading">我的猜想：白板＝${s.value === null ? '？' : s.value}</h3><div class="tile-pool">${Array.from({length: 9}, (_, i) => h.tile(dot(i + 1), {action: 'assign', value: i + 1, selected: s.value === i + 1, small: true, label: `把所有白板设为${i + 1}`})).join('')}</div>
-      ${evaluated ? `<p class="formula">代回原式：左边 ${evaluated.left}，右边 ${evaluated.right}</p>` : rules('尚未赋值时，只展示等式关系，不把未知白板当作实测重量。')}
-      ${actionRow(h.button('代回原式检查', 'check', '', {primary: true}))}
-      <div class="soft-panel"><h3 class="subheading">我的等价变形 · ${s.steps.length}步</h3>${s.steps.length ? s.steps.map((step, i) => `<p>${i + 1}. ${h.escape(step.message)}<br><strong>${h.escape(step.equation)}</strong></p>`).join('') : '<p>可以先整理等式，也可以先提出一个猜想。</p>'}</div>`;
+    return `<div class="lesson-layout equation-layout">
+      <div class="lesson-board c-stack">
+        <p class="small-text">原式：${h.escape(eqText(s.original))}</p>
+        <div class="equation-scale">
+          <section class="c-panel c-stack"><h3 class="subheading">左边</h3>${sideTiles(e.la, e.lb, h, 0)}</section>
+          <span class="equation-equals" aria-hidden="true">＝</span>
+          <section class="c-panel c-stack"><h3 class="subheading">右边</h3>${sideTiles(e.ra, e.rb, h, s.splitRight ? s.operationValue : 0)}</section>
+        </div>
+        <p class="formula">${h.escape(eqText(e))}</p>
+        <section class="c-panel c-stack"><h3 class="subheading">我的猜想：白板＝${s.value === null ? '？' : s.value}</h3>
+          <div class="tile-pool equation-guesses">${Array.from({length: 9}, (_, i) => h.tile(dot(i + 1), {action: 'assign', value: i + 1, selected: s.value === i + 1, small: true, label: `把所有白板设为${i + 1}`})).join('')}</div>
+          ${evaluated ? `<p class="small-text">代回原式：左边 ${evaluated.left}，右边 ${evaluated.right}</p>` : rules('尚未赋值时，只展示等式关系，不把未知白板当作实测重量。')}
+          ${actionRow(h.button('代回原式检查', 'check', '', {primary: true}))}
+        </section>
+      </div>
+      <div class="lesson-side c-stack">
+        <section class="c-panel c-stack"><h3 class="subheading">对两边做同样的操作</h3>
+          <label class="equation-input">操作数 <input class="number-input" type="number" min="1" max="9" value="${s.operationValue}" data-action="op-number" aria-label="两边操作使用的数"></label>
+          ${actionRow(h.button('两边都减这个数', 'subtract') + h.button('两边平均分这些份', 'divide') + h.button('两边各拿走一张白板', 'remove-x') + h.button('展开右边的数字', 'split') + h.button('为什么不能只减左边？', 'one-side'))}
+        </section>
+        <section class="c-panel c-stack"><h3 class="subheading">我的等价变形 · ${s.steps.length}步</h3>${s.steps.length ? `<ol class="c-history equation-steps">${s.steps.map(step => `<li>${h.escape(step.message)} <strong>${h.escape(step.equation)}</strong></li>`).join('')}</ol>` : '<p>可以先整理等式，也可以先提出一个猜想。</p>'}</section>
+      </div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'op-number') {
@@ -313,8 +351,13 @@ const G14A = {
   },
   view(s, h) {
     const cells = s.board.map((e, i) => `<div class="slot ${e ? 'filled' : 'empty'}" data-action="sym-cell" data-value="${i}"><span class="slot-label">${Math.floor(i / 3) + 1}行${i % 3 + 1}列${s.locked.includes(i) ? ' · 线索' : ''}</span>${e ? h.tile(e.face, {action: 'sym-cell', value: i, disabled: s.locked.includes(i), tag: s.locked.includes(i) ? '固定' : '可收回'}) : `<button class="choice-btn" data-action="sym-cell" data-value="${i}" aria-label="放在第${Math.floor(i / 3) + 1}行第${i % 3 + 1}列">放在这里</button>`}</div>`).join('');
-    return `<p class="formula">${s.axes.length === 2 ? '同时关于中间竖线、横线对称' : s.axes[0] === 'vertical' ? '关于中间竖线对称' : '关于中间横线对称'}</p><div style="position:relative"><div class="board-grid" style="--cols:3">${cells}</div>${s.axes.includes('vertical') ? '<span aria-hidden="true" style="position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed #b68d57;pointer-events:none"></span>' : ''}${s.axes.includes('horizontal') ? '<span aria-hidden="true" style="position:absolute;top:50%;left:0;right:0;border-top:2px dashed #b68d57;pointer-events:none"></span>' : ''}</div>
-      <h3 class="subheading">候选牌 · 先选牌，再点位置</h3><div class="tile-pool">${s.pool.map(e => h.tile(e.face, {action: 'sym-pick', value: e.id, selected: s.selected === e.id})).join('') || '<p>候选牌已全部放好，可以检查。</p>'}</div>${actionRow(h.button('检查对称', 'check', '', {primary: true}))}`;
+    return `<div class="lesson-layout square-layout symmetry-layout">
+      <div class="lesson-board c-stack">
+        <p class="formula square-rule">${s.axes.length === 2 ? '同时关于中间竖线、横线对称' : s.axes[0] === 'vertical' ? '关于中间竖线对称' : '关于中间横线对称'}</p>
+        <div class="symmetry-grid"><div class="board-grid square-grid" style="--cols:3">${cells}</div>${s.axes.includes('vertical') ? '<span aria-hidden="true" class="symmetry-axis vertical"></span>' : ''}${s.axes.includes('horizontal') ? '<span aria-hidden="true" class="symmetry-axis horizontal"></span>' : ''}</div>
+      </div>
+      <div class="lesson-side c-panel c-stack"><h3 class="subheading">候选牌 · 先选牌，再点位置</h3><div class="tile-pool square-stock">${s.pool.map(e => h.tile(e.face, {action: 'sym-pick', value: e.id, selected: s.selected === e.id})).join('') || '<p>候选牌已全部放好，可以检查。</p>'}</div>${actionRow(h.button('检查对称', 'check', '', {primary: true}))}</div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'sym-pick') {const id = String(a.value); if (s.pool.some(e => e.id === id)) {s.selected = s.selected === id ? null : id; s.complete = false;} return s;}
@@ -366,11 +409,18 @@ const G14B = {
   },
   view(s, h) {
     const pool = Array.from({length: 9}, (_, i) => i + 1).filter(n => !s.board.includes(n));
-    return `<p class="formula">每条线的和＝15</p><div class="board-grid" style="--cols:3">${s.board.map((n, i) => `<div class="slot ${n ? 'filled' : 'empty'}"><span class="slot-label">${Math.floor(i / 3) + 1}行${i % 3 + 1}列${s.givens[i] ? ' · 固定' : ''}</span>${n ? h.tile(dot(n), {action: 'magic-cell', value: i, disabled: !!s.givens[i], tag: s.givens[i] ? '线索' : ''}) : `<button class="choice-btn" data-action="magic-cell" data-value="${i}" aria-label="放在第${Math.floor(i / 3) + 1}行第${i % 3 + 1}列">放在这里</button>`}</div>`).join('')}</div>
-      <h3 class="subheading">还没放下的牌</h3><div class="tile-pool">${pool.map(n => h.tile(dot(n), {action: 'magic-pick', value: n, selected: s.selected === n})).join('') || '<p>九张都摆好了，检查八条线。</p>'}</div>
-      ${actionRow(h.button(s.goalCount > 1 ? '检查并收录' : '检查八条线', 'check', '', {primary: true}))}
-      <div class="collection-grid">${MAGIC_LINES.map((line, i) => {const values = line.map(k => s.board[k]); const full = values.every(Boolean); return `<div class="collection-card"><strong>${LINE_NAMES[i]}</strong><p>${values.map(n => n || '？').join('＋')}${full ? `＝${sum(values)}` : ''}${full && sum(values) === 15 ? ' ✓' : ''}</p></div>`;}).join('')}</div>
-      ${s.collection.length ? `<div class="soft-panel"><h3 class="subheading">我的完整摆法 ${s.collection.length}/${s.goalCount}</h3><div class="collection-grid">${s.collection.map((b, i) => `<div class="collection-card"><strong>第${i + 1}种</strong><p>${b.slice(0, 3).join(' ')}<br>${b.slice(3, 6).join(' ')}<br>${b.slice(6).join(' ')}</p></div>`).join('')}</div></div>` : ''}`;
+    return `<div class="lesson-layout square-layout magic-layout">
+      <div class="lesson-board c-stack">
+        <p class="formula square-rule">每条线的和＝15</p>
+        <div class="board-grid square-grid" style="--cols:3">${s.board.map((n, i) => `<div class="slot ${n ? 'filled' : 'empty'}"><span class="slot-label">${Math.floor(i / 3) + 1}行${i % 3 + 1}列${s.givens[i] ? ' · 固定' : ''}</span>${n ? h.tile(dot(n), {action: 'magic-cell', value: i, disabled: !!s.givens[i], tag: s.givens[i] ? '线索' : ''}) : `<button class="choice-btn" data-action="magic-cell" data-value="${i}" aria-label="放在第${Math.floor(i / 3) + 1}行第${i % 3 + 1}列">放在这里</button>`}</div>`).join('')}</div>
+      </div>
+      <div class="lesson-side c-stack">
+        <section class="c-panel c-stack"><h3 class="subheading">还没放下的牌</h3><div class="tile-pool square-stock magic-stock">${pool.map(n => h.tile(dot(n), {action: 'magic-pick', value: n, selected: s.selected === n})).join('') || '<p>九张都摆好了，检查八条线。</p>'}</div>
+          ${actionRow(h.button(s.goalCount > 1 ? '检查并收录' : '检查八条线', 'check', '', {primary: true}))}</section>
+        <div class="collection-grid magic-lines" aria-label="八条线的数字和">${MAGIC_LINES.map((line, i) => {const values = line.map(k => s.board[k]); const full = values.every(Boolean); return `<div class="collection-card"><strong>${LINE_NAMES[i]}</strong><p>${values.map(n => n || '？').join('＋')}${full ? `＝${sum(values)}` : ''}${full && sum(values) === 15 ? ' ✓' : ''}</p></div>`;}).join('')}</div>
+        ${s.collection.length ? `<section class="c-panel c-stack"><h3 class="subheading">我的完整摆法 ${s.collection.length}/${s.goalCount}</h3><div class="collection-grid magic-records">${s.collection.map((b, i) => `<div class="collection-card"><strong>第${i + 1}种</strong><p>${b.slice(0, 3).join(' ')}<br>${b.slice(3, 6).join(' ')}<br>${b.slice(6).join(' ')}</p></div>`).join('')}</div></section>` : ''}
+      </div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'magic-pick') {const n = Number(a.value); if (n >= 1 && n <= 9 && !s.board.includes(n)) {s.selected = s.selected === n ? null : n; s.complete = false;} return s;}
@@ -449,12 +499,20 @@ const G15 = {
     const name = player => s.mode === 'two' ? (player === 0 ? '玩家甲' : '玩家乙') : player === 0 ? '你' : '小竹';
     const pile = Array.from({length: s.remaining}, (_, i) => `${['dots', 'bamboo', 'characters'][Math.floor(i / 9) % 3]}_${String(i % 9 + 1).padStart(2, '0')}`);
     const group = s.maxTake + 1;
-    return `<div class="soft-panel"><p class="formula">还剩 ${s.remaining} 张</p><p>${s.phase === 'ended' ? `${h.escape(name(s.winner))}拿到了最后一张，本局结束。` : `现在轮到${h.escape(name(s.turn))} · 每次取1—${s.maxTake}张`}</p><div class="tile-pool">${pile.map(face => h.tile(face, {disabled: true, small: true})).join('') || '<p>桌面已经取空。</p>'}</div></div>
-      ${actionRow(Array.from({length: s.maxTake}, (_, i) => h.button(`取${i + 1}张`, 'take', i + 1, {primary: i === 0, disabled: s.phase !== 'playing' || i + 1 > s.remaining})).join(''))}
-      ${s.mode === 'two' ? `<h3 class="subheading">如果双方都用最好的策略，谁占优势？</h3><div class="choice-row">${choice(h, '先手甲占优势', 'predict', 'first', s.prediction === 'first')}${choice(h, '后手乙占优势', 'predict', 'second', s.prediction === 'second')}</div>` : ''}
-      <div class="soft-panel"><h3 class="subheading">我的策略解释</h3><div class="choice-row">${choice(h, `让相邻两次行动合计取${group}张`, 'reason', 'group', s.reason === 'group')}${choice(h, '每次都取最多的张数', 'reason', 'most', s.reason === 'most')}${choice(h, '挑牌面数字最大的牌', 'reason', 'rank', s.reason === 'rank')}</div>${rules(`本关按张数取牌，牌面数字不计分。${s.ai === 'optimal' && s.mode !== 'two' ? '小竹会使用最优策略。' : ''}`)}</div>
-      ${actionRow(h.button('检查本局发现', 'check', '', {primary: true}) + h.button('再来一局', 'again'))}
-      ${s.history.length ? `<div class="soft-panel"><h3 class="subheading">一起复盘</h3>${s.history.map((m, i) => `<p>${i + 1}. ${h.escape(name(m.player))}取${m.take}张：${m.before} → ${m.after}${m.after > 0 && m.after % group === 0 ? ` · 留下${group}的倍数` : ''}</p>`).join('')}</div>` : ''}`;
+    const pileColumns = Math.min(s.start, 7);
+    return `<div class="lesson-layout strategy-layout" style="--pile-cols:${pileColumns};--pile-rows:${Math.ceil(s.start / pileColumns)}">
+      <div class="lesson-board c-stack strategy-board">
+        <p class="formula">还剩 ${s.remaining} 张</p><p>${s.phase === 'ended' ? `${h.escape(name(s.winner))}拿到了最后一张，本局结束。` : `现在轮到${h.escape(name(s.turn))} · 每次取1—${s.maxTake}张`}</p>
+        ${pile.length ? `<div class="tile-pool strategy-pile">${pile.map(face => h.tile(face, {disabled: true})).join('')}</div>` : '<p>桌面已经取空。</p>'}
+        ${actionRow(Array.from({length: s.maxTake}, (_, i) => h.button(`取${i + 1}张`, 'take', i + 1, {primary: i === 0, disabled: s.phase !== 'playing' || i + 1 > s.remaining})).join(''))}
+      </div>
+      <div class="lesson-side c-stack">
+        ${s.mode === 'two' ? `<section class="c-stack"><h3 class="subheading">如果双方都用最好的策略，谁占优势？</h3><div class="choice-row">${choice(h, '先手甲占优势', 'predict', 'first', s.prediction === 'first')}${choice(h, '后手乙占优势', 'predict', 'second', s.prediction === 'second')}</div></section>` : ''}
+        <section class="c-panel c-stack"><h3 class="subheading">我的策略解释</h3><div class="choice-row c-list">${choice(h, `让相邻两次行动合计取${group}张`, 'reason', 'group', s.reason === 'group')}${choice(h, '每次都取最多的张数', 'reason', 'most', s.reason === 'most')}${choice(h, '挑牌面数字最大的牌', 'reason', 'rank', s.reason === 'rank')}</div>${rules(`本关按张数取牌，牌面数字不计分。${s.ai === 'optimal' && s.mode !== 'two' ? '小竹会使用最优策略。' : ''}`)}</section>
+        ${actionRow(h.button('检查本局发现', 'check', '', {primary: true}) + h.button('再来一局', 'again'))}
+      </div>
+      ${s.history.length ? `<section class="lesson-wide c-panel c-stack"><h3 class="subheading">一起复盘</h3><ol class="c-history strategy-history">${s.history.map(m => `<li>${h.escape(name(m.player))}取${m.take}张：${m.before} → ${m.after}${m.after > 0 && m.after % group === 0 ? ` <small>留下${group}的倍数</small>` : ''}</li>`).join('')}</ol></section>` : ''}
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'again') return G15.create(s.level, (s.seed + 1) >>> 0);

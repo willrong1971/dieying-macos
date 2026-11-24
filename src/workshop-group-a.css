@@ -1,0 +1,147 @@
+/* Counting lessons share one visible table with a full discovery area. */
+.workshop-shell .counting-layout .subheading { margin: 0; }
+.workshop-shell .counting-layout :is(.counting-task, .counting-collection, .house-stock) {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+.workshop-shell .counting-layout .counting-task {
+  padding: clamp(8px, 1vw, 16px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #14352839;
+}
+.workshop-shell .counting-layout .counting-task .formula { text-align: left; line-height: 1.2; }
+.workshop-shell .counting-layout .counting-task .formula strong { font-size: clamp(27px, 3.2vw, 44px); }
+.workshop-shell .counting-layout .counting-inventory {
+  --inventory-tile: var(--lesson-tile);
+  display: grid;
+  grid-template-columns: repeat(var(--inventory-cols), minmax(0, 1fr));
+  width: min(100%, calc(var(--inventory-cols) * var(--inventory-tile) + (var(--inventory-cols) - 1) * var(--lesson-gap)));
+  align-items: start;
+}
+.workshop-shell .counting-layout .counting-inventory > .tile,
+.workshop-shell .counting-layout .repeat-position > .tile { width: 100%; }
+.workshop-shell .counting-layout .counting-tray {
+  --tray-tile: clamp(52px, 15vw, 100px);
+  display: grid;
+  width: min(100%, calc(var(--tray-slots) * (var(--tray-tile) + 12px) + (var(--tray-slots) - 1) * var(--lesson-gap)));
+  grid-template-columns: repeat(var(--tray-slots), minmax(0, 1fr));
+  justify-content: start;
+  justify-self: start;
+}
+.workshop-shell .counting-layout .counting-tray > .slot { min-width: 0; min-height: 0; padding: 4px; }
+.workshop-shell .counting-layout .counting-tray .slot-label { margin-bottom: 3px; }
+.workshop-shell .counting-layout .counting-tray :is(.tile, .counting-tray-empty) {
+  width: min(100%, var(--tray-tile));
+  height: auto;
+  aspect-ratio: 5 / 7;
+}
+.counting-tray-empty { display: grid; place-items: center; border-radius: 6px; background: #13342a44; }
+.workshop-shell .counting-layout .counting-collection .collection-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--collection-width, 104px)), 1fr));
+  gap: 5px;
+}
+.workshop-shell .counting-layout .counting-collection .collection-card {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px;
+  padding: 5px 6px;
+}
+.workshop-shell .counting-layout .counting-collection .formula {
+  font-family: inherit;
+  font-size: clamp(12px, 1.05vw, 16px);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* G01 keeps cabinet and loose tiles in view, including the full 27-tile set. */
+.museum-cabinet-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 7px; }
+.museum-cabinet-heading .small-text { flex: 1 1 160px; }
+.workshop-shell .counting-layout .museum-grid {
+  --museum-gap: clamp(3px, .55vw, 9px);
+  --museum-height: clamp(84px, 26vw, 150px);
+  width: 100%;
+  gap: var(--museum-gap);
+}
+.workshop-shell .counting-layout .museum-grid.museum-many-rows { --museum-height: 59px; }
+.workshop-shell .counting-layout .museum-grid > .museum-slot {
+  height: var(--museum-height);
+  min-height: 0;
+  padding: 3px;
+  gap: 3px;
+}
+.workshop-shell .counting-layout .museum-grid .slot-label { margin: 0; white-space: nowrap; }
+.workshop-shell .counting-layout .museum-grid > .museum-slot .tile {
+  width: min(100%, calc((var(--museum-height) - 25px) * 5 / 7));
+}
+.workshop-shell .counting-layout .museum-grid .museum-slot > [data-action="place"] {
+  min-height: 28px;
+  max-width: 100%;
+  padding: 2px 4px;
+  line-height: 1.25;
+}
+.workshop-shell .counting-layout .museum-many-rows > .museum-slot { flex-direction: row; justify-content: space-evenly; }
+.workshop-shell .counting-layout .museum-many-rows > .museum-slot .tile {
+  width: min(57%, calc((var(--museum-height) - 9px) * 5 / 7));
+}
+.workshop-shell .counting-layout .museum-wide-cabinet .museum-slot .slot-label { font-size: clamp(9px, 1.12vw, 12px); }
+
+/* G03/G04 give the selected ordering room for full-size tiles. */
+.workshop-shell .counting-layout .counting-board .choice-row { justify-content: flex-start; }
+.workshop-shell .counting-layout .repeat-position { min-width: 0; display: grid; justify-items: center; gap: 4px; }
+.workshop-shell .counting-layout .repeat-position .slot-label { margin: 0; }
+
+/* G05 gives every room the same height and keeps the current stock beside it. */
+.workshop-shell .counting-layout.houses-layout { --room-tile: clamp(26px, 9vw, 62px); --room-gap: 4px; --collection-width: 112px; }
+.workshop-shell .counting-layout .room-grid > .room-slot {
+  display: grid;
+  min-height: 0;
+  gap: 6px;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: space-between;
+  padding: 6px 4px;
+}
+.workshop-shell .counting-layout .room-slot .subheading { text-align: center; }
+.workshop-shell .counting-layout .room-slot .subheading .small-text { margin-inline-start: 2px; white-space: nowrap; }
+.workshop-shell .counting-layout .room-slot .room-tray {
+  display: grid;
+  align-content: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, calc(2 * var(--room-tile) + var(--room-gap)));
+  min-height: calc(var(--room-rows) * 1.4 * var(--room-tile) + (var(--room-rows) - 1) * var(--room-gap));
+  gap: var(--room-gap);
+}
+.workshop-shell .counting-layout .room-grid > .room-slot .room-tray > .tile { width: 100%; }
+.workshop-shell .counting-layout .room-slot > [data-action="add"] { max-width: 100%; }
+.workshop-shell .counting-layout .house-stock .counting-inventory { --inventory-tile: min(var(--lesson-tile), 104px); }
+
+@media (min-width: 860px) {
+  .workshop-shell .lesson-layout.museum-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .workshop-shell .lesson-layout.museum-wide-cabinet { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .workshop-shell .counting-layout .counting-inventory {
+    --inventory-tile: clamp(38px, calc((100cqb - 74px - (var(--inventory-rows) - 1) * var(--lesson-gap)) / var(--inventory-rows) * 5 / 7), min(17cqi, 190px));
+  }
+  .workshop-shell .counting-layout .museum-stock .counting-inventory {
+    --lesson-gap: clamp(4px, .5vw, 8px);
+    --inventory-tile: clamp(38px, calc((100cqb - 110px - (var(--inventory-rows) - 1) * var(--lesson-gap)) / var(--inventory-rows) * 5 / 7), min(17cqi, 190px));
+  }
+  .workshop-shell .counting-layout .museum-grid {
+    --museum-height: clamp(70px, calc((100cqb - 74px - (var(--cabinet-rows) - 1) * var(--museum-gap)) / var(--cabinet-rows)), 242px);
+  }
+  .workshop-shell .counting-layout .museum-grid.museum-many-rows {
+    --museum-height: clamp(42px, calc((100cqb - 66px - (var(--cabinet-rows) - 1) * var(--museum-gap)) / var(--cabinet-rows)), 106px);
+  }
+  .workshop-shell .counting-layout .counting-tray {
+    --tray-tile: clamp(58px, min(16cqb, 9cqi), 126px);
+  }
+  .workshop-shell .counting-layout.houses-layout { --room-tile: clamp(39px, min(13cqb, 8cqi), 112px); }
+}
+
+@media (max-width: 480px) {
+  .workshop-shell .counting-layout .museum-wide-cabinet .museum-grid { --museum-height: 74px; }
+  .workshop-shell .counting-layout .museum-wide-cabinet .museum-grid > .museum-slot { padding: 2px; }
+  .workshop-shell .counting-layout .museum-wide-cabinet .museum-grid .museum-slot > [data-action="place"] { padding: 1px; font-size: 9px; }
+  .workshop-shell .counting-layout .room-slot > [data-action="add"] { padding-inline: 5px; }
+}

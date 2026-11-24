@@ -1,0 +1,163 @@
+/* Proofs, classification and routes share the table's size budget. */
+.workshop-shell .logic-lesson .logic-pane { gap: clamp(7px, 1.2vw, 13px); }
+.workshop-shell .logic-lesson .logic-heading {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+}
+.workshop-shell .logic-lesson .logic-heading > span,
+.workshop-shell .logic-lesson .logic-group-label > small,
+.workshop-shell .logic-lesson .logic-region-heading > small {
+  color: #b6c7a9; font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.workshop-shell .logic-lesson .logic-task h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; line-height: 1.4; }
+.workshop-shell .logic-lesson .logic-task p { margin: 4px 0 0; font-size: clamp(12px, 1vw, 14px); line-height: 1.55; }
+.workshop-shell .logic-lesson .logic-card {
+  min-width: 0;
+  padding: clamp(6px, .75vw, 12px);
+  border: 1px solid #acba9533;
+  border-radius: 8px;
+  background: #173a2b47;
+}
+.workshop-shell .logic-lesson .logic-proof { display: grid; gap: 6px; }
+.workshop-shell .logic-lesson .logic-proof h3 { font-size: clamp(12px, 1vw, 15px); }
+.workshop-shell .logic-lesson .choice-row { justify-content: start; gap: 5px; }
+.workshop-shell .logic-lesson .choice-btn { font-size: 12px; min-height: 34px; padding: 5px 9px; white-space: normal; }
+.workshop-shell .logic-lesson .logic-reasons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.workshop-shell .logic-lesson .logic-reasons > button { text-align: start; line-height: 1.45; }
+.workshop-shell .logic-lesson .tile-pool { margin: 0; }
+.workshop-shell .logic-lesson .logic-stock {
+  --stock-cols: var(--stock-compact-cols, 3);
+  --stock-tile: var(--lesson-tile);
+  --stock-gap: clamp(3px, .62vw, 9px);
+  display: grid;
+  width: min(100%, calc(var(--stock-cols) * var(--stock-tile) + (var(--stock-cols) - 1) * var(--stock-gap)));
+  grid-template-columns: repeat(var(--stock-cols), minmax(0, 1fr));
+  gap: var(--stock-gap); justify-self: center;
+}
+.workshop-shell .logic-lesson .logic-stock-dense { --stock-cols: 7; }
+.workshop-shell .logic-lesson .logic-stock-nine { --stock-cols: 4; justify-self: start; }
+.workshop-shell .logic-lesson .logic-stock > .tile { width: 100%; }
+.workshop-shell .logic-lesson .logic-stock:empty,
+.workshop-shell .logic-lesson .route-stock:empty { display: none; }
+
+/* G06: the still-available stock stays on the left; the proof stays beside it. */
+.workshop-shell .guarantee-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.workshop-shell .guarantee-group { display: grid; align-content: start; gap: 5px; }
+.workshop-shell .logic-lesson .logic-group-label { display: flex; align-items: baseline; flex-wrap: wrap; justify-content: space-between; gap: 2px 4px; font-size: 12px; }
+.workshop-shell .logic-lesson .guarantee-group .tile-pool { display: grid; grid-template-columns: repeat(var(--group-slots), minmax(0, 1fr)); gap: 2px; }
+.workshop-shell .logic-lesson .guarantee-group .tile-pool:empty { display: none; }
+.workshop-shell .logic-lesson .guarantee-group .tile { width: min(100%, var(--logic-group-tile, 44px)); }
+
+/* G07: four result regions grow with their contents and share one scroll area. */
+.workshop-shell .sieve-regions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--lesson-gap); }
+.workshop-shell .sieve-region { min-height: 60px; }
+.workshop-shell .logic-lesson .logic-region-heading { display: flex; align-items: center; gap: 5px; }
+.workshop-shell .logic-lesson .logic-region-heading .choice-btn { flex: 1; min-width: 0; }
+.workshop-shell .logic-lesson .sieve-region .tile-pool {
+  justify-content: flex-start; gap: 3px; margin-top: 6px;
+}
+.workshop-shell .logic-lesson .sieve-region .tile { width: min(19.1%, var(--logic-region-tile, 50px)); }
+.workshop-shell .logic-lesson .sieve-region[data-packed] .tile { width: min(13.5%, var(--logic-region-tile, 50px)); }
+
+/* G09: the actual board gets the height budget; empty cells remain large drop targets. */
+.workshop-shell .lesson-layout.nine-lesson {
+  --nine-face-width: clamp(69px, 21vw, 124px);
+  --nine-cell-height: calc(var(--nine-face-width) * 1.4 + 25px);
+}
+.workshop-shell .logic-lesson .nine-grid {
+  width: min(100%, calc(3 * (var(--nine-face-width) + 14px) + 2 * var(--lesson-gap)));
+}
+.workshop-shell .logic-lesson .nine-grid > .slot {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: var(--nine-cell-height);
+  padding-block: 3px;
+}
+.workshop-shell .logic-lesson .nine-grid > .slot .slot-label { margin: 0 0 3px; line-height: 1.3; }
+.workshop-shell .logic-lesson .nine-grid > .slot > .tile { width: var(--nine-face-width); }
+.workshop-shell .logic-lesson .nine-grid > .slot.empty > button { flex: 1; width: 100%; min-height: 42px; background: #15392d38; }
+.workshop-shell .logic-lesson .nine-grid > .slot.empty > button:hover { background: #c9ca9325; }
+
+/* G10: numbered tiles keep routes readable when the row breaks. */
+.workshop-shell .lesson-layout.route-lesson { --route-cols: 3; --route-tile: var(--lesson-tile); }
+.workshop-shell .logic-lesson .logic-route {
+  display: grid; gap: 7px;
+  padding-bottom: var(--lesson-gap); border-bottom: 1px solid #acc7a040;
+}
+.workshop-shell .logic-lesson :is(.route-track, .route-stock) {
+  display: grid;
+  width: min(100%, calc(var(--route-cols) * var(--route-tile) + (var(--route-cols) - 1) * var(--lesson-gap)));
+  grid-template-columns: repeat(var(--route-cols), minmax(0, 1fr));
+  gap: var(--lesson-gap);
+}
+.workshop-shell .game-surface .logic-lesson .route-track { list-style: none; padding: 0; margin: 0; }
+.workshop-shell .logic-lesson .route-track li { min-width: 0; }
+.workshop-shell .logic-lesson :is(.route-track, .route-stock) .tile { width: 100%; }
+.workshop-shell .logic-lesson .route-graph { display: grid; justify-items: center; gap: 5px; }
+.workshop-shell .logic-lesson .route-graph svg { display: block; width: 100%; max-height: 245px; height: auto; }
+.workshop-shell .logic-lesson .route-collection { padding-top: 8px; border-top: 1px solid #acc7a040; }
+.workshop-shell .logic-lesson .route-collection ol { margin: 5px 0 0; padding-inline-start: 20px; }
+.workshop-shell .logic-lesson .route-collection li { font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+
+@media (min-width: 860px) {
+  .workshop-shell .lesson-layout.guarantee-lesson {
+    --logic-group-tile: clamp(22px, calc((100cqb - 205px) / 4.2 - 20px), 56px);
+  }
+  .workshop-shell .lesson-layout.sieve-lesson { --logic-region-tile: clamp(37px, 9.3cqb, 72px); }
+  .workshop-shell .logic-lesson .logic-stock {
+    --stock-tile: clamp(62px, calc((100cqb - 56px) / 4.3), 166px);
+  }
+  .workshop-shell .logic-lesson .logic-stock-dense {
+    --stock-cols: 9;
+    --stock-tile: clamp(40px, calc((100cqb - 128px) / 4.4), 118px);
+  }
+  .workshop-shell .logic-lesson .logic-stock-nine {
+    --stock-cols: 5;
+    --stock-tile: clamp(53px, calc((100cqb - 138px) / 3), 121px);
+  }
+  .workshop-shell .lesson-layout.nine-lesson {
+    --nine-face-width: clamp(72px, calc((100cqb - 106px) / 4.2), 195px);
+  }
+  .workshop-shell .lesson-layout.route-lesson {
+    --route-cols: 5;
+    --route-tile: clamp(54px, calc((100cqb - 75px) / 4.4), 146px);
+  }
+  .workshop-shell .logic-lesson .route-graph svg { max-height: clamp(126px, calc(100cqb - 270px), 315px); }
+  .workshop-shell .route-lesson:has(.route-collection ol) .route-graph svg {
+    max-height: clamp(108px, calc(100cqb - 315px), 315px);
+  }
+}
+
+/* Nine populated number bins need space for three rows as well as the proof. */
+@container lesson-surface (max-height: 610px) {
+  .workshop-shell .lesson-layout.guarantee-lesson:has(.guarantee-groups > :nth-child(7)) {
+    --logic-group-tile: clamp(24px, calc((100cqb - 335px) / 4.2), 56px);
+  }
+  .workshop-shell .guarantee-lesson:has(.guarantee-groups > :nth-child(7)) .lesson-side { gap: 8px; }
+  .workshop-shell .guarantee-lesson:has(.guarantee-groups > :nth-child(7)) .guarantee-group {
+    padding: 4px 7px; gap: 2px;
+  }
+}
+
+@container lesson-surface (min-height: 620px) {
+  .workshop-shell .logic-lesson .logic-stock-dense {
+    --stock-cols: 7; --stock-tile: clamp(65px, calc((100cqb - 150px) / 5.75), 120px);
+  }
+  .workshop-shell .logic-lesson .logic-stock-nine { --stock-cols: 3; }
+}
+
+@container lesson-surface (min-width: 1000px) and (min-height: 490px) {
+  .workshop-shell .sieve-lesson .logic-stock-dense {
+    --stock-cols: 7; --stock-tile: clamp(53px, calc((100cqb - 171px) / 5.6), 120px);
+  }
+  .workshop-shell .sieve-lesson .logic-proof {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+  }
+}
+
+@media (max-width: 470px) {
+  .workshop-shell .logic-lesson .logic-stock-dense { --stock-cols: 6; }
+  .workshop-shell .logic-lesson .logic-region-heading .choice-btn { min-height: 40px; }
+  .workshop-shell .logic-lesson .sieve-region .tile { width: min(22%, 43px); }
+  .workshop-shell .logic-lesson .sieve-region[data-packed] .tile { width: min(17%, 43px); }
+  .workshop-shell .logic-lesson .logic-region-heading { align-items: baseline; flex-wrap: wrap; }
+  .workshop-shell .logic-lesson .logic-region-heading .choice-btn { flex-basis: 100%; }
+}

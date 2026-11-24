@@ -1,0 +1,116 @@
+/* A lesson fills the table. Oversized content can scroll with the table itself. */
+.workshop-shell .game-surface > .lesson-layout {
+  --lesson-tile: clamp(54px, 16vw, 90px);
+  --lesson-gap: clamp(5px, .9vw, 12px);
+  --lesson-section-gap: clamp(9px, 1.3vw, 17px);
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: safe center;
+  align-items: center;
+  gap: var(--lesson-section-gap) clamp(16px, 2.5vw, 40px);
+}
+.workshop-shell .lesson-layout :is(.lesson-board, .lesson-side, .lesson-wide) {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: var(--lesson-section-gap);
+}
+.workshop-shell .lesson-layout .lesson-wide { grid-column: 1 / -1; }
+.workshop-shell .lesson-layout :is(.soft-panel, .board-grid, .subheading, .action-row, .choice-row, .collection-grid) {
+  margin: 0;
+}
+.workshop-shell .lesson-layout .soft-panel { padding: clamp(8px, 1vw, 15px); min-width: 0; }
+.workshop-shell .lesson-layout .board-grid {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: var(--lesson-gap);
+}
+.workshop-shell .lesson-layout .tile-pool { gap: var(--lesson-gap); padding: 0; }
+.workshop-shell .lesson-layout .tile,
+.workshop-shell .lesson-layout .board-grid > .slot .tile {
+  width: var(--lesson-tile);
+  height: auto;
+  max-width: 100%;
+  aspect-ratio: 5 / 7;
+}
+.workshop-shell .lesson-layout :is(.tile-small, .collection-card .tile) {
+  width: var(--lesson-small-tile, 33px);
+}
+.workshop-shell .lesson-layout .board-grid > .slot {
+  min-width: 0;
+  min-height: calc(1.4 * var(--lesson-tile) + 20px);
+  padding: 5px;
+}
+.workshop-shell .lesson-layout .action-row {
+  justify-content: flex-start;
+  gap: var(--lesson-gap);
+}
+.workshop-shell .lesson-layout .choice-row { gap: var(--lesson-gap); }
+.workshop-shell .lesson-layout .collection-card {
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+}
+.workshop-shell .lesson-layout .collection-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 115px), 1fr));
+}
+.workshop-shell .lesson-layout table { max-width: 100%; }
+
+@media (min-width: 860px) {
+  .workshop-shell:has(.lesson-layout) {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  .workshop-shell:has(.lesson-layout) .workshop-topbar { flex: none; }
+  .workshop-shell .workshop-play.play-page:has(.lesson-layout) {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    padding-block: 10px 12px;
+  }
+  .workshop-shell .workshop-play:has(.lesson-layout) .play-header { flex: none; min-height: 43px; padding-bottom: 9px; }
+  .workshop-shell .workshop-play:has(.lesson-layout) .workspace {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+  }
+  .workshop-shell .workshop-play:has(.lesson-layout) .game-table { flex: 1 1 0; min-height: 0; }
+  .workshop-shell .workshop-play:has(.lesson-layout) .table-bottomstrip { flex-shrink: 0; }
+  .workshop-shell .workshop-play.play-page #game-surface:has(> .lesson-layout),
+  .is-workshop-immersive .workshop-shell .workshop-play.play-page #game-surface.game-surface:has(> .lesson-layout) {
+    display: block;
+    flex: 1 1 0;
+    min-height: 0;
+    container: lesson-surface / size;
+    padding-inline: clamp(15px, 2vw, 42px);
+  }
+  .workshop-shell .workshop-play.play-page #game-surface:has(> .lesson-layout) { padding-block: 12px; }
+  .is-workshop-immersive .workshop-shell .workshop-play.play-page:has(.lesson-layout) { padding: 0; }
+  .workshop-shell .game-surface > .lesson-layout {
+    --lesson-tile: clamp(52px, min(8.2cqi, 19cqb), 150px);
+    --lesson-small-tile: clamp(26px, 6cqb, 53px);
+    --lesson-section-gap: clamp(7px, 2.25cqb, 19px);
+    min-height: 100%;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 859px) {
+  .workshop-shell .game-surface:has(> .lesson-layout) { padding-inline: clamp(10px, 3vw, 24px); }
+  html:not(.is-workshop-immersive) .workshop-shell .game-surface:has(> .lesson-layout) { overflow: visible; }
+  .workshop-shell .lesson-layout .collection-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 95px), 1fr));
+  }
+}

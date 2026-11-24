@@ -62,6 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         view.addItem(.separator())
         add("麻将对对碰", #selector(showSolitaire), key: "1", to: view)
         add("数学教学工坊", #selector(showWorkshop), key: "2", to: view)
+        add("认牌馆", #selector(showGallery), key: "3", to: view)
         let full = add("进入或退出全屏", #selector(toggleFullscreen), key: "f", to: view)
         full.keyEquivalentModifierMask = [.command, .control]
         attach(view, to: menu)
@@ -104,6 +105,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     @objc private func resetView() { game.click("reset-view") }
     @objc private func showSolitaire() { game.showSolitaire() }
     @objc private func showWorkshop() { game.showWorkshop() }
+    @objc private func showGallery() { game.showGallery() }
     @objc private func toggleFullscreen() { window.toggleFullScreen(nil) }
     @objc private func diagnostics() { game.showDiagnostics() }
 

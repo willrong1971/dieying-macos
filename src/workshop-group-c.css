@@ -1,0 +1,237 @@
+/* Exploration lessons keep the main operation beside its evidence on wide
+   screens. Small windows stack those same parts inside the outer table. */
+.workshop-shell .lesson-layout .c-stack {
+  display: grid;
+  gap: clamp(6px, .85vw, 12px);
+  min-width: 0;
+}
+
+.workshop-shell .lesson-layout .c-panel {
+  padding: clamp(7px, 1vw, 14px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #17372c50;
+}
+
+.workshop-shell .lesson-layout .c-stack > :is(.subheading, .formula, .small-text) { margin: 0; }
+.workshop-shell .lesson-layout .c-stack p:not(.formula) { line-height: 1.5; }
+.workshop-shell .lesson-layout .c-stack .choice-row { justify-content: flex-start; }
+.workshop-shell .lesson-layout .c-stack .choice-row.c-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+.workshop-shell .lesson-layout .c-list .choice-btn {
+  min-height: 36px;
+  padding: 6px 10px;
+  text-align: start;
+  white-space: normal;
+}
+.workshop-shell .lesson-layout .c-stack .action-row {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.workshop-shell .lesson-layout .c-stack .action-row :is(.btn-primary, .btn-secondary) {
+  min-height: 38px;
+  padding: 6px 11px;
+}
+.workshop-shell .lesson-layout .c-history {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  gap: 6px;
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+}
+.workshop-shell .lesson-layout .c-history li {
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.workshop-shell .lesson-layout .c-history small { color: var(--workshop-gold); white-space: nowrap; }
+
+/* 翻牌机关: keep the target and the playable row in the same columns. */
+.workshop-shell .flip-layout .flip-board .tile-pool {
+  display: grid;
+  grid-template-columns: repeat(var(--flip-count), minmax(0, 1fr));
+  gap: clamp(4px, .65vw, 10px);
+  justify-items: center;
+}
+.workshop-shell .flip-layout .flip-board .tile-pool > .tile { width: min(100%, var(--lesson-tile)); }
+.workshop-shell .flip-layout .flip-board > section + section { padding-inline: clamp(7px, 1vw, 14px); }
+.workshop-shell .flip-layout .flip-board .tile-tag { font-size: clamp(8px, 1vw, 11px); }
+
+/* 牌袋实验室: collect and classify samples beside the visible inventory. */
+.workshop-shell .lab-layout .lab-bag {
+  display: grid;
+  grid-template-columns: repeat(var(--bag-count), minmax(0, 1fr));
+  justify-items: center;
+}
+.workshop-shell .lab-layout .lab-bag > .tile { width: min(100%, var(--lesson-tile)); }
+.workshop-shell .lab-layout .lab-sample-options { gap: 5px; }
+.workshop-shell .lab-layout .lab-sample-options > .choice-btn { min-height: 35px; padding: 5px 9px; }
+.workshop-shell .lab-layout :is(.lab-frequencies, .lab-samples) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 87px), 1fr));
+  gap: 5px;
+}
+.workshop-shell .lab-layout :is(.lab-frequencies, .lab-samples) > .collection-card {
+  display: grid;
+  justify-items: center;
+  justify-content: stretch;
+  gap: 4px;
+  padding: 6px 4px;
+  text-align: center;
+}
+.workshop-shell .lab-layout .lab-samples > .collection-card p { font-size: clamp(10px, 1vw, 12px); }
+.lab-bar {
+  width: 100%;
+  height: 5px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #cfbf84 var(--frequency), #738f7260 var(--frequency));
+}
+.lab-latest { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.workshop-shell .lab-layout .lab-latest > .tile-pool { flex-wrap: nowrap; gap: 5px; }
+.workshop-shell .lab-layout .lab-latest .tile { width: clamp(24px, 3vw, 42px); }
+
+/* 白板天平: each side retains full tiles and operators. The guesses are a row
+   of equal buttons, independent of how many terms are on the balance. */
+.equation-scale {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(3px, .6vw, 10px);
+}
+.equation-scale > section { align-content: center; text-align: center; }
+.equation-equals { align-self: center; color: var(--workshop-gold); font-size: clamp(14px, 2.4vw, 31px); }
+.workshop-shell .game-surface .equation-layout .lesson-board > .formula { line-height: 1.35; }
+.workshop-shell .equation-layout .equation-terms {
+  --plus-width: clamp(10px, 1.2vw, 19px);
+  --term-gap: clamp(1px, .4vw, 6px);
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--term-gap);
+  justify-content: center;
+}
+.workshop-shell .equation-layout .equation-terms > .tile {
+  width: min(var(--lesson-tile), calc((100% - (var(--term-count) - 1) * (var(--plus-width) + 2 * var(--term-gap))) / var(--term-count)));
+}
+.workshop-shell .equation-layout .equation-terms > span.formula {
+  flex: 0 0 var(--plus-width);
+  font-size: clamp(11px, 1.5vw, 21px);
+  line-height: 1;
+}
+.workshop-shell .equation-layout .equation-guesses {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: clamp(3px, .5vw, 7px);
+  justify-items: center;
+}
+.workshop-shell .equation-layout .equation-guesses > .tile { width: min(100%, var(--guess-width, 76px)); }
+.equation-input { display: flex; align-items: center; gap: 9px; }
+.workshop-shell .equation-layout .equation-steps {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+.equation-steps strong { display: block; color: var(--workshop-gold); font-weight: 600; }
+
+/* 对称工坊与十五幻方: locked and empty positions use the same footprint. */
+.workshop-shell .square-layout .lesson-board { --lesson-tile: clamp(47px, 20vw, 114px); }
+.workshop-shell .game-surface .square-layout .square-rule { line-height: 1.35; }
+.workshop-shell .square-layout .square-grid,
+.workshop-shell .square-layout .symmetry-grid {
+  width: min(100%, calc(3 * var(--lesson-tile) + 34px + 2 * var(--lesson-gap)));
+  margin: 0 auto;
+}
+.workshop-shell .square-layout .symmetry-grid .square-grid { width: 100%; }
+.workshop-shell .square-layout .square-grid > .slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(1.4 * var(--lesson-tile) + 25px);
+  padding: 4px;
+}
+.workshop-shell .square-layout .square-grid .slot-label {
+  margin: 0 0 3px;
+  text-align: center;
+  line-height: 1.25;
+}
+.workshop-shell .square-layout .square-grid > .slot .tile { max-width: 100%; }
+.workshop-shell .square-layout .square-grid > .slot .choice-btn {
+  max-width: 100%;
+  min-height: 34px;
+  padding: 5px;
+  line-height: 1.35;
+}
+.symmetry-grid { position: relative; }
+.symmetry-axis { position: absolute; pointer-events: none; z-index: 6; }
+.symmetry-axis.vertical { top: 0; bottom: 0; left: 50%; border-left: 2px dashed #c9a573; }
+.symmetry-axis.horizontal { left: 0; right: 0; top: 50%; border-top: 2px dashed #c9a573; }
+.workshop-shell .square-layout .square-stock > .tile { width: min(100%, var(--lesson-tile), 94px); }
+.workshop-shell .magic-layout .magic-stock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center; }
+.magic-stock > p { grid-column: 1 / -1; }
+.workshop-shell .magic-layout .magic-lines { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.workshop-shell .magic-layout .magic-lines .collection-card { display: grid; justify-items: center; padding: 5px 3px; text-align: center; }
+.workshop-shell .magic-layout .magic-lines .collection-card p { font-size: clamp(10px, .98vw, 13px); line-height: 1.4; }
+.workshop-shell .magic-layout .magic-lines .collection-card strong { font-size: clamp(10px, .98vw, 13px); }
+.workshop-shell .magic-layout .magic-records .collection-card p { font-variant-numeric: tabular-nums; letter-spacing: .16em; }
+
+/* 取牌策略: a stable counting grid, plus a wrapping timeline for the whole
+   game. Even long move histories never create an inner scrollbar. */
+.workshop-shell .strategy-layout .strategy-board > p { text-align: center; }
+.workshop-shell .strategy-layout .strategy-board > .action-row { justify-content: center; }
+.workshop-shell .strategy-layout .strategy-pile {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(var(--pile-cols), minmax(0, var(--lesson-tile)));
+  justify-items: center;
+  gap: clamp(4px, .75vw, 10px);
+}
+.workshop-shell .strategy-layout .strategy-pile > .tile { width: 100%; }
+
+@media (min-width: 860px) {
+  .workshop-shell .lesson-layout.flip-layout {
+    grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+    --lesson-tile: clamp(50px, calc((100cqb - 180px) / 2.8), 151px);
+  }
+  .workshop-shell .lesson-layout.lab-layout {
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+    --lesson-tile: clamp(60px, 20cqb, 148px);
+  }
+  .workshop-shell .lesson-layout.equation-layout {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    --lesson-tile: clamp(65px, 21cqb, 168px);
+    --guess-width: clamp(46px, 13.5cqb, 76px);
+  }
+  .workshop-shell .equation-layout .lesson-board.c-stack { gap: clamp(6px, 1.4cqb, 12px); }
+  .workshop-shell .square-layout .lesson-board {
+    --lesson-tile: clamp(58px, calc((100cqb - 157px) / 4.2), 166px);
+  }
+  .workshop-shell .square-layout .square-stock { --lesson-tile: clamp(58px, 14cqb, 113px); }
+  .workshop-shell .magic-layout .magic-stock { --lesson-tile: clamp(46px, 12.5cqb, 94px); }
+  .workshop-shell .lesson-layout.strategy-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    --lesson-tile: clamp(53px, calc((100cqb - 166px) / var(--pile-rows) / 1.45), 149px);
+  }
+}
+
+@media (max-width: 559px) {
+  .workshop-shell .flip-layout .flip-board .tile-pool { grid-template-columns: repeat(var(--flip-narrow-count), minmax(0, 1fr)); }
+  .workshop-shell .equation-layout .equation-guesses { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .workshop-shell .square-layout .square-grid > .slot { min-height: calc(1.4 * var(--lesson-tile) + 30px); }
+  .workshop-shell .magic-layout .magic-lines { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workshop-shell .strategy-layout .strategy-pile { grid-template-columns: repeat(5, minmax(0, var(--lesson-tile))); }
+}
+
+/* Reserve space for records before sizing the cards in a short window. */
+@container lesson-surface (max-height: 555px) {
+  .workshop-shell .lesson-layout.flip-layout:has(.c-history) {
+    --lesson-tile: clamp(50px, calc((100cqb - 201px) / 2.8), 151px);
+  }
+  .workshop-shell .lesson-layout.flip-layout:has(.c-history li:nth-child(9)) {
+    --lesson-tile: clamp(50px, calc((100cqb - 225px) / 2.8), 151px);
+  }
+  .workshop-shell .lesson-layout.lab-layout :is(.c-stack, .lab-latest) { gap: 7px; }
+}

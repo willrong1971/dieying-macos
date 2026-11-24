@@ -6,7 +6,8 @@ import vm from 'node:vm';
 const bridgeSource=readFileSync(new URL('../Resources/NativeBridge.js',import.meta.url),'utf8');
 const GAME='mahjong-solitaire:v1';
 const VOICE='mahjong-solitaire:voice';
-const ALLOWED=[GAME,VOICE,'mahjong-solitaire:tile-sounds','mahjong-math-workshop:v1','mahjong-math-workshop:v1:recovery'];
+const WORKSHOP_SOUNDS='mahjong-math-workshop:sounds';
+const ALLOWED=[GAME,VOICE,'mahjong-solitaire:tile-sounds','mahjong-math-workshop:v1','mahjong-math-workshop:v1:recovery',WORKSHOP_SOUNDS];
 const normalize=value=>JSON.parse(JSON.stringify(value));
 
 // A WKWebView navigation creates a new JS global/Storage prototype, while its
@@ -115,12 +116,14 @@ test('a new WKWebView launch restores the latest native snapshot once with its n
   const backing=new Map(),firstNames={value:''};
   const first=document({backing,names:firstNames,initial:{[GAME]:'100'},token:'old-launch'});
   first.storage.setItem(GAME,'98');
+  first.storage.setItem(WORKSHOP_SOUNDS,'off');
   const latest=first.snapshot();
   // Simulate an outdated WebKit disk cache after a process interruption.
   backing.set(GAME,'100');
   const newNames={value:''};
   const relaunched=document({backing,names:newNames,initial:latest,token:'new-launch'});
   assert.equal(relaunched.storage.getItem(GAME),'98');
+  assert.equal(relaunched.storage.getItem(WORKSHOP_SOUNDS),'off');
   assert.equal(newNames.value,'dieying:new-launch');
   relaunched.storage.setItem(GAME,'96');
   const navigated=document({backing,names:newNames,initial:latest,token:'new-launch'});

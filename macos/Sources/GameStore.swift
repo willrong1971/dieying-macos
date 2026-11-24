@@ -3,7 +3,7 @@ import Foundation
 final class GameStore {
     static let allowedKeys: Set<String> = [
         "mahjong-solitaire:v1", "mahjong-solitaire:voice", "mahjong-solitaire:tile-sounds",
-        "mahjong-math-workshop:v1", "mahjong-math-workshop:v1:recovery"
+        "mahjong-math-workshop:v1", "mahjong-math-workshop:v1:recovery", "mahjong-math-workshop:sounds"
     ]
     private let file: URL
     private(set) var values: [String: String]

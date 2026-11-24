@@ -63,6 +63,7 @@ button:disabled { opacity: .4; }
 }
 .workshop-tool-button:hover, .workshop-topbar .text-button:hover, .workshop-nav > button:hover, .workshop-topbar-actions > button:hover { background: #c3cba70c; border-color: #c5caa828; color: #f4eddb; }
 .workshop-tool-button.primary, .workshop-nav .immersive-button { color: #d8c58f; border-color: #cbb57e40; }
+.workshop-gallery-link { text-decoration: none; }
 .workshop-topbar kbd { display: none; }
 .workshop-shell .main-content { max-width: none; padding: 0; margin: 0; }
 
@@ -197,16 +198,6 @@ button:disabled { opacity: .4; }
 .workshop-shell .table-bottomstrip .table-tools { flex-shrink: 0; border-top: 0; background: none; padding-left: 10px; }
 .table-bottomstrip > .btn-primary { margin: 7px 12px 7px 0; min-height: 35px; padding: 7px 13px; font-size: 11px; }
 .workshop-shell .game-bottom-note, .workshop-shell .thinking-panel { display: none; }
-
-/* Small boards are allowed to be the focus rather than a wide spreadsheet. */
-.workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool { display: grid; grid-template-columns: repeat(3, 88px); gap: 9px 21px; }
-.workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool > .tile { width: 88px; height: 123px; }
-.workshop-shell .workshop-play[data-game="G01"] .board-grid { max-width: 1220px; }
-.workshop-shell .workshop-play[data-game="G01"] .board-grid[style*="--cols:3"] { max-width: 600px; }
-.workshop-shell .workshop-play[data-game="G01"] .board-grid > .slot { min-height: 118px; }
-.workshop-shell .workshop-play[data-game="G01"] .board-grid > .slot .tile { width: 65px; height: 92px; }
-.workshop-shell .workshop-play[data-game="G10"] .board-grid,
-.workshop-shell .workshop-play[data-game="G14B"] .board-grid { max-width: 550px; }
 
 /* Welcome is one table, not a wall of sixteen permanent menus. */
 .workshop-home { max-width: 1380px; margin: auto; padding: 34px 36px 28px; }
@@ -353,13 +344,12 @@ button:disabled { opacity: .4; }
 .is-workshop-immersive { min-height: 100dvh; }
 .is-workshop-immersive .workshop-topbar, .is-workshop-immersive .play-header, .is-workshop-immersive .feedback, .is-workshop-immersive .table-tools, .is-workshop-immersive .page-footer { display: none; }
 .is-workshop-immersive .table-bottomstrip { display: none; }
-.is-workshop-immersive .table-bottomstrip.has-result { display: flex; position: fixed; z-index: 18; bottom: 0; left: 0; right: 0; min-height: 45px; border-top: 1px solid #bbc39833; background: #102f27f2; box-shadow: 0 -6px 28px #061e181a; }
+.is-workshop-immersive .table-bottomstrip.has-result { display: flex; flex: 0 0 auto; min-height: 45px; border-top: 1px solid #bbc39833; background: #102f27f2; box-shadow: 0 -6px 28px #061e181a; }
 .is-workshop-immersive .table-bottomstrip.has-result .feedback { display: flex; align-items: center; padding: 12px 23px; max-width: 1300px; margin: auto; }
 .is-workshop-immersive .table-bottomstrip.has-result .feedback p { font-size: 12px; }
-.is-workshop-immersive .game-table:has(.table-bottomstrip.has-result) #game-surface { padding-bottom: 91px; }
 .is-workshop-immersive .workshop-play.play-page { padding: 0; margin: 0; width: 100%; max-width: none; }
-.is-workshop-immersive .game-table { border: 0; border-radius: 0; min-height: 100dvh; box-shadow: none; }
-.is-workshop-immersive .game-surface { min-height: 100dvh; max-height: 100dvh; padding: 45px clamp(18px, 7vw, 160px) 40px; display: flex; flex-direction: column; justify-content: safe center; overflow: auto; }
+.is-workshop-immersive .game-table { border: 0; border-radius: 0; box-shadow: none; }
+.is-workshop-immersive .game-surface { padding: 22px clamp(14px, 3vw, 48px); display: flex; flex-direction: column; justify-content: safe center; }
 .is-workshop-immersive .game-surface > * { width: 100%; flex-shrink: 0; }
 .is-workshop-immersive .game-surface > .tile-pool { width: auto; }
 .is-workshop-immersive .game-surface > .board-grid { width: 100%; }
@@ -373,170 +363,6 @@ button:disabled { opacity: .4; }
 .workshop-immersive-exit kbd { color: #a4b49c; font-size: 10px; border: 1px solid #afbf8e33; border-radius: 3px; padding: 2px 4px; }
 #toast { left: 50%; bottom: 24px; background: #193c30f5; color: #eee5c9; border-color: #c6bd7c55; font-size: 12px; box-shadow: 0 7px 30px #051c1855; }
 
-@media (min-width: 900px) {
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface {
-    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(285px, .85fr);
-    gap: 13px 26px; justify-content: center; align-content: center; align-items: start;
-    padding: 21px 28px 23px;
-  }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .soft-panel:first-child { grid-column: 1; grid-row: 1 / 4; max-height: max(390px, calc(100dvh - 270px)); overflow: auto; padding: 15px; scrollbar-width: thin; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .soft-panel:first-child .board-grid { margin-bottom: 0; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .soft-panel:first-child .action-row { gap: 9px; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .soft-panel:first-child .action-row p { min-width: 140px; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .subheading { grid-column: 2; grid-row: 1; font-size: 13px; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .tile-pool { grid-column: 2; grid-row: 2; justify-content: flex-start; align-content: start; padding: 0 3px 2px 0; gap: 7px; max-height: max(290px, calc(100dvh - 350px)); overflow: auto; scrollbar-width: thin; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .tile-pool > .tile { width: 64px; height: 90px; }
-  .workshop-shell .workshop-play[data-game="G01"] #game-surface > .action-row { grid-column: 2; grid-row: 3; justify-content: flex-start; margin-top: 2px; }
-  .workshop-shell .workshop-play:is([data-game="G02"], [data-game="G03"]) #game-surface {
-    display: grid; grid-template-columns: minmax(330px, 480px) minmax(310px, 600px);
-    gap: 14px 28px; justify-content: center; align-content: center; align-items: start;
-    padding: 21px 28px 23px;
-  }
-  .workshop-shell .workshop-play:is([data-game="G02"], [data-game="G03"]) #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play[data-game="G02"] #game-surface > .soft-panel:first-child { grid-column: 1; grid-row: 1 / 3; padding: 20px; align-self: center; }
-  .workshop-shell .workshop-play[data-game="G02"] #game-surface > .subheading { grid-column: 2; grid-row: 1; font-size: 13px; }
-  .workshop-shell .workshop-play[data-game="G02"] #game-surface > .tile-pool { grid-column: 2; grid-row: 2; gap: 7px; padding: 0; justify-content: flex-start; align-content: start; max-height: 360px; overflow: auto; scrollbar-width: thin; }
-  .workshop-shell .workshop-play[data-game="G02"] #game-surface > .tile-pool > .tile { width: 64px; height: 90px; }
-  .workshop-shell .workshop-play[data-game="G02"] #game-surface > .soft-panel:last-child { grid-column: 1 / -1; grid-row: 3; padding: 13px 18px; }
-  .workshop-shell .workshop-play[data-game="G03"] #game-surface > .choice-row { grid-column: 1 / -1; grid-row: 1; }
-  .workshop-shell .workshop-play[data-game="G03"] #game-surface > .soft-panel:not(:last-child) { grid-column: 1; grid-row: 2; padding: 20px; }
-  .workshop-shell .workshop-play[data-game="G03"] #game-surface > .tile-pool { grid-column: 2; grid-row: 2; align-self: center; gap: 9px; padding: 0; }
-  .workshop-shell .workshop-play[data-game="G03"] #game-surface > .soft-panel:last-child { grid-column: 1 / -1; grid-row: 3; padding: 13px 18px; }
-  .workshop-shell .workshop-play:is([data-game="G02"], [data-game="G03"]) #game-surface > .soft-panel:last-child > .collection-grid { max-height: 180px; overflow: auto; scrollbar-width: thin; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface {
-    display: grid; grid-template-columns: minmax(330px, 540px) minmax(330px, 520px);
-    gap: 12px 28px; justify-content: center; align-content: center; align-items: start;
-    padding: 18px 25px 20px;
-  }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:first-child { grid-column: 1 / -1; grid-row: 1; padding: 10px 16px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid { grid-column: 1; grid-row: 2 / 6; gap: 8px; align-self: center; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid > .soft-panel { padding: 11px 9px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid .subheading { font-size: 12px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid .tile-pool { padding: 6px 0; gap: 4px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid .tile { width: 39px; height: 55px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .board-grid .choice-btn { font-size: 11px; padding: 8px 9px; min-height: 37px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .subheading { grid-column: 2; grid-row: 2; font-size: 12px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .tile-pool { grid-column: 2; grid-row: 3; justify-content: flex-start; align-content: start; gap: 5px; padding: 0 3px 2px 0; max-height: clamp(150px, calc(100dvh - 560px), 300px); overflow: auto; scrollbar-width: thin; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .tile-pool > .tile { width: 57px; height: 80px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:not(:first-child) { grid-column: 2; grid-row: 4; padding: 12px 14px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:not(:first-child) h3 { font-size: 13px; line-height: 1.6; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:not(:first-child) .subheading { font-size: 12px; margin: 10px 0 7px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:not(:first-child) .choice-row { margin: 8px 0 0; gap: 6px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .soft-panel:not(:first-child) .choice-btn { font-size: 11px; min-height: 35px; padding: 8px 10px; }
-  .workshop-shell .workshop-play:is([data-game="G06"], [data-game="G07"]) #game-surface > .action-row { grid-column: 2; grid-row: 5; justify-content: flex-start; margin-top: 0; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface {
-    display: grid; grid-template-columns: repeat(2, minmax(350px, 520px));
-    grid-template-rows: min-content 22px 90px 43px auto 22px auto min-content auto min-content;
-    gap: 12px 30px; justify-content: center; align-content: start; align-items: start;
-    padding: 22px 27px 26px;
-  }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="predict"]) { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 17px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="predict"]) h3 { text-align: left; margin: 0; white-space: nowrap; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="predict"]) .choice-row { margin: 0; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > h3:nth-of-type(1) { grid-column: 1; grid-row: 2; font-size: 12px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .tile-pool { grid-column: 1; grid-row: 3; padding: 0; gap: 7px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .tile-pool > .tile { width: 64px; height: 90px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .action-row:has([data-action="draw"]) { grid-column: 1; grid-row: 4; gap: 8px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .action-row:has([data-action="draw"]) button { font-size: 12px; padding: 10px 12px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has(.tile-pool):not(:has([data-action])) { grid-column: 1; grid-row: 5; padding: 13px 16px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has(.tile-pool):not(:has([data-action])) .subheading { font-size: 12px; margin-bottom: 6px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has(.tile-pool):not(:has([data-action])) .tile-pool { padding: 0; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has(.tile-pool):not(:has([data-action])) p { font-size: 11px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > h3:nth-of-type(2) { grid-column: 1; grid-row: 6; font-size: 12px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .collection-grid { grid-column: 1; grid-row: 7; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 7px; align-content: start; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .collection-grid > .collection-card { padding: 9px 7px; min-height: 74px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .collection-grid > .collection-card > div { width: 100%; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .collection-grid p { font-size: 11px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) { grid-column: 2; grid-row: 2 / 8; padding: 17px 19px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) p { font-size: 12px; text-align: left; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) .choice-row { gap: 7px; margin: 14px 0 0; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) .choice-btn { font-size: 12px; min-height: 38px; padding: 8px 12px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) .collection-card { min-height: 44px; padding: 8px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .soft-panel:has([data-action="sample-submit"]) .collection-card p { font-size: 11px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > h3:nth-of-type(3) { grid-column: 1 / -1; grid-row: 8; padding-top: 5px; font-size: 13px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .choice-row:has([data-action="reason"]) { grid-column: 1 / -1; grid-row: 9; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .choice-row:has([data-action="reason"]) .choice-btn { white-space: normal; font-size: 12px; line-height: 1.7; }
-  .workshop-shell .workshop-play[data-game="G12"] #game-surface > .action-row:has([data-action="check"]) { grid-column: 1 / -1; grid-row: 10; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface {
-    display: grid; grid-template-columns: minmax(340px, 520px) minmax(260px, 400px);
-    grid-template-rows: min-content min-content min-content min-content auto;
-    gap: 12px clamp(25px, 3vw, 48px); justify-content: center; align-content: center; align-items: start;
-    padding-top: 17px; padding-bottom: 19px;
-  }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > :first-child { grid-column: 1 / -1; grid-row: 1; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > .board-grid,
-  .workshop-shell .workshop-play[data-game="G14A"] #game-surface > div[style*="position:relative"] { grid-column: 1; grid-row: 2 / 6; align-self: center; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface .board-grid { max-width: none; width: 100%; margin: 0; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface .board-grid > .slot { min-height: 129px; padding: 8px 5px; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface .board-grid > .slot .tile { width: 72px; height: 101px; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > .subheading { grid-column: 2; grid-row: 2; margin-bottom: 1px; font-size: 13px; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > .tile-pool { grid-column: 2; grid-row: 3; justify-content: flex-start; align-content: start; padding: 0; gap: 7px; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > .tile-pool > .tile { width: 64px; height: 90px; }
-  .workshop-shell .workshop-play:is([data-game="G09"], [data-game="G14A"], [data-game="G14B"]) #game-surface > .action-row { grid-column: 2; grid-row: 4; justify-content: flex-start; margin: 4px 0 0; }
-  .workshop-shell .workshop-play[data-game="G14B"] #game-surface > .collection-grid { grid-column: 2; grid-row: 5; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; align-content: start; }
-  .workshop-shell .workshop-play[data-game="G14B"] #game-surface > .collection-grid > .collection-card { min-height: 49px; padding: 6px 4px; gap: 2px; align-content: center; }
-  .workshop-shell .workshop-play[data-game="G14B"] #game-surface > .collection-grid strong { font-size: 10px; }
-  .workshop-shell .workshop-play[data-game="G14B"] #game-surface > .collection-grid p { width: 100%; font-size: 10px; line-height: 1.5; text-align: center; white-space: nowrap; }
-  .workshop-shell .workshop-play[data-game="G14B"] #game-surface > .soft-panel { grid-column: 1 / -1; grid-row: 6; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface {
-    display: grid;
-    grid-template-columns: minmax(320px, 430px) minmax(240px, 360px);
-    grid-template-rows: repeat(4, min-content) auto;
-    column-gap: clamp(26px, 4vw, 60px); row-gap: 12px;
-    justify-content: center; align-content: center; align-items: start;
-    padding-top: 22px; padding-bottom: 24px;
-  }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool {
-    grid-column: 1; grid-row: 1 / 6; width: auto; justify-self: center; align-self: center;
-    grid-template-columns: repeat(3, 88px); gap: 9px 21px; padding: 0;
-  }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .soft-panel:first-child { grid-column: 2; grid-row: 1; padding: 14px 16px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .soft-panel:first-child h3 { text-align: left; font-size: 15px; line-height: 1.7; margin-bottom: 5px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .soft-panel:first-child p { text-align: left; font-size: 12px; line-height: 1.8; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .small-text,
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .choice-row { grid-column: 2; grid-row: 2; text-align: left; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .choice-row { gap: 8px; justify-content: stretch; align-items: stretch; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .choice-row > .soft-panel { flex: 1; min-width: 110px; padding: 9px 11px; margin: 0; font-size: 12px; line-height: 1.7; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .action-row { grid-column: 2; grid-row: 3; justify-content: flex-start; margin: 0 0 5px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .subheading { grid-column: 2; grid-row: 4; font-size: 12px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .collection-grid { grid-column: 2; grid-row: 5; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 190px; overflow: auto; align-content: start; padding-right: 3px; scrollbar-width: thin; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .collection-grid:empty,
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .subheading:has(+ .collection-grid:empty) { display: none; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .collection-grid .collection-card { padding: 9px 5px; gap: 3px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .collection-grid .tile-pool { gap: 1px; padding: 2px 0; }
-  .is-workshop-immersive .workshop-shell .workshop-play[data-game="G08"] #game-surface { grid-template-columns: minmax(380px, 530px) minmax(260px, 380px); column-gap: clamp(40px, 6vw, 100px); }
-}
-@media (min-width: 1100px) {
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface {
-    display: grid; grid-template-columns: minmax(500px, 620px) minmax(280px, 380px);
-    gap: 9px 32px; justify-content: center; align-content: center; align-items: start;
-    padding-top: 18px; padding-bottom: 22px;
-  }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > * { width: 100%; max-width: none; margin: 0; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > p:first-child { grid-column: 1 / -1; grid-row: 1; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .board-grid { grid-column: 1; grid-row: 2; gap: 9px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .board-grid .soft-panel { padding: 12px 9px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .board-grid .tile-pool { gap: 4px; padding: 4px 0; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .board-grid .tile { width: 58px; height: 82px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .board-grid .formula { font-size: 17px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > p.formula:not(:last-of-type) { grid-column: 1; grid-row: 3; font-size: 22px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > h3 { grid-column: 1; grid-row: 4; font-size: 13px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .tile-pool { grid-column: 1; grid-row: 5; padding: 0; gap: 7px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .tile-pool .tile { width: 44px; height: 62px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > p:last-of-type { grid-column: 1; grid-row: 6; font-size: 13px; line-height: 1.75; text-align: center; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .action-row { grid-column: 1; grid-row: 7; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .soft-panel:has(.number-input) { grid-column: 2; grid-row: 2 / 6; padding: 17px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .soft-panel:has(.number-input) .action-row { justify-content: flex-start; gap: 8px; margin: 13px 0 10px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .soft-panel:has(.number-input) button { font-size: 12px; padding: 9px 12px; min-height: 39px; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .soft-panel:last-child { grid-column: 2; grid-row: 6 / 8; padding: 13px 17px; max-height: 150px; overflow: auto; }
-  .workshop-shell .workshop-play[data-game="G13"] #game-surface > .soft-panel:last-child p { font-size: 12px; line-height: 1.7; }
-}
 @media (min-width: 1700px) {
   .workshop-topbar { padding-left: 40px; padding-right: 40px; }
   .workshop-play.play-page { padding-left: 34px; padding-right: 34px; }
@@ -622,10 +448,6 @@ button:disabled { opacity: .4; }
   .workshop-shell .table-bottomstrip .feedback { flex-basis: 100%; padding-bottom: 9px; }
   .workshop-shell .table-bottomstrip .table-tools { width: 100%; min-height: 39px; border-top: 1px solid #a5b98d17; }
   .table-bottomstrip > .btn-primary { margin-left: auto; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool { grid-template-columns: repeat(3, 75px); gap: 7px 17px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool > .tile { width: 75px; height: 105px; }
-  .workshop-shell .workshop-play[data-game="G01"] .board-grid > .slot { min-height: 105px; }
-  .workshop-shell .workshop-play[data-game="G01"] .board-grid > .slot .tile { width: 55px; height: 78px; }
   .workshop-home { padding: 24px 20px; }
   .workshop-welcome, .workshop-home .home-hero { grid-template-columns: 1.1fr .9fr; gap: 10px; padding: 5px 0 24px; }
   .workshop-welcome h1, .workshop-home .hero-copy h1 { font-size: 30px; margin: 12px 0; }
@@ -681,8 +503,6 @@ button:disabled { opacity: .4; }
   .workshop-shell .slot .tile { width: 56px; height: 79px; }
   .workshop-shell .board-grid[style*="--cols:3"] > .slot .tile { width: 62px; height: 87px; }
   .workshop-shell .board-grid[style*="--cols:3"] > .slot { min-height: 119px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool { grid-template-columns: repeat(3, 73px); gap: 7px 15px; }
-  .workshop-shell .workshop-play[data-game="G08"] #game-surface > .tile-pool > .tile { width: 73px; height: 102px; }
   .workshop-home { padding: 20px 18px; }
   .workshop-welcome, .workshop-home .home-hero { grid-template-columns: 1fr; padding-bottom: 22px; }
   .workshop-home .hero-art { height: 205px; order: -1; }
@@ -713,17 +533,91 @@ button:disabled { opacity: .4; }
   .workshop-shell *, .workshop-dialog *, .workshop-immersive-exit { transition-duration: .01ms; }
 }
 
-/* Keep immersion independent of later, game-specific and mobile layouts. */
+/* The play area takes the space left by the feedback bar, even when it wraps. */
 html.is-workshop-immersive, html.is-workshop-immersive body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+.is-workshop-immersive .workshop-shell { height: 100dvh; }
+.is-workshop-immersive .workshop-play, .is-workshop-immersive .workspace, .is-workshop-immersive .game-table { height: 100%; }
 .is-workshop-immersive .workshop-shell .workshop-play.play-page #game-surface.game-surface {
-  height: 100dvh; min-height: 100dvh; max-height: 100dvh;
-  overflow: auto; overscroll-behavior: contain;
-  padding-top: max(50px, env(safe-area-inset-top));
-  padding-bottom: max(35px, env(safe-area-inset-bottom));
+  flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  align-content: safe center;
+  padding-top: max(54px, env(safe-area-inset-top));
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
 }
-.is-workshop-immersive .workshop-shell .workshop-play.play-page .game-table:has(.table-bottomstrip.has-result) #game-surface.game-surface {
-  padding-bottom: calc(108px + env(safe-area-inset-bottom));
+
+/* Three-tile families: both columns share the felt, and discovered groups
+   wrap as whole cards within the same scroll area as the table. */
+.workshop-shell .game-surface > .family-table {
+  width: 100%; max-width: none; margin: 0;
+  display: grid; align-items: center; gap: clamp(18px, 3vw, 42px);
 }
+.workshop-shell .family-hand {
+  --hand-gap: clamp(8px, 1.24vw, 18px);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hand-gap); padding: 0; margin: 0;
+  width: min(100%, 420px); justify-self: center;
+}
+.workshop-shell .family-hand > .tile {
+  display: flex; width: 100%; height: auto; aspect-ratio: 5 / 7;
+}
+.family-work { display: grid; gap: 14px; min-width: 0; }
+.family-task {
+  padding: 11px 14px;
+  border: 1px solid var(--line); border-radius: 8px; background: #14352839;
+}
+.workshop-shell .game-surface .family-task h3 { font-size: clamp(14px, 1.35vw, 21px); font-weight: 600; line-height: 1.45; }
+.workshop-shell .game-surface .family-task p { margin-top: 4px; font-size: clamp(11px, 1vw, 15px); line-height: 1.6; }
+.family-controls { display: grid; gap: 8px; }
+.family-properties { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: #e3e1ca; }
+.family-properties span { border: 1px solid var(--line); border-radius: 5px; padding: 3px 8px; }
+.workshop-shell .family-controls > .action-row { justify-content: flex-start; margin: 0; }
+.workshop-shell .family-discoveries > h3 { margin: 0 0 8px; font-size: clamp(13px, 1.2vw, 17px); font-weight: 600; }
+.family-discoveries h3 span { margin-inline-start: .6em; font-size: .85em; color: var(--workshop-muted); }
+.workshop-shell .family-results {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 0;
+}
+.workshop-shell .family-results .collection-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 6px; text-align: center; min-height: 0; }
+.workshop-shell .family-results .tile-pool { display: flex; flex-wrap: nowrap; justify-content: center; padding: 0; gap: 2px; }
+.workshop-shell .family-results .tile { width: min(34px, calc((100% - 4px) / 3)); height: auto; aspect-ratio: 5 / 7; }
+.workshop-shell .family-results .small-text { font-size: 11px; line-height: 1.25; }
 @media (max-width: 760px) {
   .is-workshop-immersive .workshop-shell .workshop-play.play-page #game-surface.game-surface { padding-top: max(58px, env(safe-area-inset-top)); }
+}
+@media (min-width: 900px) {
+  .workshop-shell:has(.family-table) { height: 100dvh; display: flex; flex-direction: column; }
+  .workshop-shell:has(.family-table) .workshop-topbar { flex: none; }
+  .workshop-shell .workshop-play[data-game="G08"].play-page {
+    display: flex; flex: 1 1 0; flex-direction: column; min-height: 0; width: 100%; max-width: none;
+  }
+  .workshop-shell .workshop-play[data-game="G08"] .workspace { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; align-items: stretch; }
+  .workshop-shell .workshop-play[data-game="G08"] .game-table { flex: 1 1 0; min-height: 0; }
+  .workshop-shell .workshop-play[data-game="G08"] .table-bottomstrip { flex-shrink: 0; }
+  .workshop-shell .workshop-play[data-game="G08"] #game-surface,
+  .is-workshop-immersive .workshop-shell .workshop-play[data-game="G08"].play-page #game-surface.game-surface {
+    display: block; flex: 1 1 0; min-height: 0; container-type: size;
+    padding-inline: clamp(18px, 3vw, 64px);
+  }
+  .workshop-shell .workshop-play[data-game="G08"] #game-surface { padding-block: 18px; }
+  .workshop-shell .game-surface > .family-table {
+    min-height: 100%; grid-template-columns: minmax(0, 1.03fr) minmax(0, 1fr);
+  }
+  .workshop-shell .family-hand {
+    --hand-width: clamp(68px, calc((100cqb - (var(--hand-rows) - 1) * var(--hand-gap) - 8px) / var(--hand-rows) * 5 / 7), 270px);
+    width: min(100%, calc(3 * var(--hand-width) + 2 * var(--hand-gap)));
+  }
+  .family-work { gap: clamp(8px, 2cqb, 18px); }
+  .workshop-shell .family-results .tile { width: min(clamp(24px, 8cqb, 68px), calc((100% - 4px) / 3)); }
+  .workshop-shell .family-results-dense { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .workshop-shell .family-results-dense { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@container (max-height: 460px) {
+  .family-work { gap: 7px; }
+  .family-task { padding: 5px 9px; }
+  .family-controls { gap: 4px; }
+  .workshop-shell .family-discoveries > h3 { margin-bottom: 5px; }
+  .workshop-shell .family-results { gap: 4px; }
+  .workshop-shell .family-results-dense { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .workshop-shell .family-results-dense .collection-card { padding: 3px; gap: 2px; }
+  .workshop-shell .family-results-dense .tile { width: min(clamp(21px, 5.6cqb, 35px), calc((100% - 4px) / 3)); }
 }

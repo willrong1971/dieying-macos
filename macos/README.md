@@ -29,7 +29,7 @@ AppKit 原生应用窗口，使用 macOS 自带的 WebKit 图形内核运行本�
 - `I` / 菜单“显示 → 沉浸牌桌”：沉浸；`Esc`：返回。
 - `⌘N`：新牌局；`⌘P`：暂停或继续。
 - `⌘T`：提示；`⌘Z`：撤销；`⌘R`：洗牌；`⌘0`：视角复位。
-- `⌘1`：对对碰；`⌘2`：数学教学工坊。
+- `⌘1`：对对碰，`⌘2`：数学教学工坊，`⌘3`：认牌馆。
 - `⌃⌘F` 或窗口绿色按钮：原生窗口全屏。
 
 ## 存档
@@ -58,4 +58,4 @@ codesign --verify --deep --strict 'dist/macos/叠影.app'
 
 “帮助 → 运行状态…”可查看本机窗口、画布与声音的运行状态；诊断信息只在本机显示。
 
-本机的运行截图与验收记录可保存在 `qa/macos/`，此目录由 Git 忽略。资源清单保存在 App 的 `Contents/Resources/Web/asset-manifest.json`，列出所有资源的尺寸与 SHA-256。
+`qa/macos/` 保存实际运行截图与验收记录。资源清单保存在 App 的 `Contents/Resources/Web/asset-manifest.json`，列出所有资源的尺寸与 SHA-256。

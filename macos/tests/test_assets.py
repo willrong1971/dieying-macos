@@ -31,7 +31,7 @@ class AssetPackagingTests(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
         self.put = put
-        for name in ["index.html", "solitaire.html", "public/icon.svg", "src/solitaire.js", "src/games/group-a.js", "src/solitaire.css", "vendor/three/build/three.module.js"]:
+        for name in ["index.html", "solitaire.html", "tile-studio.html", "public/icon.svg", "src/solitaire.js", "src/games/group-a.js", "src/solitaire.css", "vendor/three/build/three.module.js"]:
             put(name)
         for folder in ["ivory-warm", "v2"]:
             for index in range(42):
@@ -55,6 +55,7 @@ class AssetPackagingTests(unittest.TestCase):
         paths = {item["path"] for item in manifest["files"]}
         self.assertIn("index.html", paths)
         self.assertIn("solitaire.html", paths)
+        self.assertIn("tile-studio.html", paths)
         self.assertIn("src/games/group-a.js", paths)
         self.assertEqual(len([name for name in paths if name.endswith(".glb")]), 3)
         self.assertNotIn("exports/high-resolution.glb", paths)

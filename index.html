@@ -9,11 +9,12 @@
     if (location.protocol !== 'file:') {
       const icon = document.createElement('link');
       icon.rel = 'icon'; icon.type = 'image/svg+xml'; icon.href = '/public/icon.svg';
-      const stylesheet = document.createElement('link');
-      stylesheet.rel = 'stylesheet'; stylesheet.href = '/src/styles.css';
-      const workshopStylesheet = document.createElement('link');
-      workshopStylesheet.rel = 'stylesheet'; workshopStylesheet.href = '/src/workshop.css';
-      document.head.append(icon, stylesheet, workshopStylesheet);
+      const styles = ['styles', 'workshop', 'workshop-fit', 'workshop-group-a', 'workshop-group-b', 'workshop-group-c'];
+      document.head.append(icon, ...styles.map(name => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet'; link.href = '/src/' + name + '.css';
+        return link;
+      }));
     }
   </script>
   <script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js","three/addons/":"/vendor/three/examples/jsm/"}}</script>

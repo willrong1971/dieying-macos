@@ -44,17 +44,27 @@ const g06 = {
     const groups = s.groups.map(k => {
       const cards = s.chosen.filter(id => String(info(id)[s.attribute]) === k);
       const title = s.attribute === 'suit' ? SUIT_NAMES[k] + '牌' : '数字' + k;
-      return '<div class="soft-panel"><div class="subheading">' + title + ' · ' + cards.length + '张</div><div class="tile-pool">' + cards.map(id => h.tile(id, { action: 'pick', value: id, small: true, selected: true })).join('') + '</div></div>';
+      return `<div class="logic-card guarantee-group"><div class="logic-group-label"><span>${title}</span><small>${cards.length} 张</small></div><div class="tile-pool">${cards.map(id => h.tile(id, { action: 'pick', value: id, small: true, selected: true })).join('')}</div></div>`;
     }).join('');
     const options = Array.from({ length: 5 }, (_, i) => Math.max(1, s.safe - 1) + i);
-    return '<div class="soft-panel"><h3>保证至少' + s.repeat + '张同' + attribute + '</h3><p>先摆一个最大反例：每类都还不到' + s.repeat + '张。</p></div>' +
-      '<div class="board-grid" style="--cols:' + (s.groups.length > 3 ? 3 : s.groups.length) + '">' + groups + '</div>' +
-      '<h3 class="subheading">可取的牌 <span class="small-text">点已摆出的牌可以归还</span></h3><div class="tile-pool">' + tileRow(s.cards.filter(id => !s.chosen.includes(id)), h) + '</div>' +
-      '<div class="soft-panel"><h3>再多一张：最少取几张才一定出现？</h3><div class="choice-row">' + options.map(n => emptyChoice(n + '张', 'guess', n, h, s.guess === n)).join('') + '</div>' +
-      '<h3 class="subheading">用什么理由说明？</h3><div class="choice-row">' +
-      emptyChoice('各类已到安全上限，再来一张必进某一类', 'reason', 'capacity', h, s.reason === 'capacity') +
-      emptyChoice('我刚才已经抽到过一次重复', 'reason', 'trial', h, s.reason === 'trial') +
-      '</div></div><div class="action-row">' + h.button('检查反例和理由', 'check', '', { primary: true }) + h.button('清空摆牌', 'clear') + '</div>';
+    const available = s.cards.filter(id => !s.chosen.includes(id));
+    return `<div class="lesson-layout logic-lesson guarantee-lesson">
+      <section class="lesson-board logic-pane">
+        <div class="logic-heading"><h3>可取的牌</h3><span>${available.length} 张</span></div>
+        <div class="tile-pool logic-stock ${s.cards.length > 12 ? 'logic-stock-dense' : ''}" style="--stock-compact-cols:${s.cards.length > 9 ? 4 : 3}" role="group" aria-label="可取的牌">${tileRow(available, h)}</div>
+      </section>
+      <section class="lesson-side logic-pane">
+        <header class="logic-task"><h3>保证至少${s.repeat}张同${attribute}</h3><p>先摆一个最大反例：每类都还不到${s.repeat}张。点已摆出的牌可以归还。</p></header>
+        <div class="guarantee-groups" style="--group-slots:${s.attribute === 'suit' ? s.cards.length / s.groups.length : 3}" role="group" aria-label="按${attribute}整理的反例">${groups}</div>
+        <div class="logic-proof">
+          <h3>再多一张：最少取几张才一定出现？</h3>
+          <div class="choice-row logic-counts">${options.map(n => emptyChoice(n + '张', 'guess', n, h, s.guess === n)).join('')}</div>
+          <h3>用什么理由说明？</h3>
+          <div class="choice-row logic-reasons">${emptyChoice('各类已到安全上限，再来一张必进某一类', 'reason', 'capacity', h, s.reason === 'capacity')}${emptyChoice('我刚才已经抽到过一次重复', 'reason', 'trial', h, s.reason === 'trial')}</div>
+        </div>
+        <div class="action-row">${h.button('检查反例和理由', 'check', '', { primary: true })}${h.button('清空摆牌', 'clear')}</div>
+      </section>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'pick' && s.cards.includes(a.value)) { s.chosen = s.chosen.includes(a.value) ? s.chosen.filter(x => x !== a.value) : [...s.chosen, a.value]; s.complete = false; s.progress.current = s.chosen.length; return feedback(s, '继续检查每一类的张数。'); }
@@ -99,11 +109,30 @@ const g07 = {
     const b = s.above ? '数字大于' + s.above : '偶数牌';
     const ask = { union: '条牌或者' + b, intersection: '既是条牌，又是' + b, neither: '既不是条牌，也不是' + b, leftOnly: '是条牌，但不是' + b }[s.target];
     const labels = { '10': '只符合左边：条牌', '11': '两个条件都符合', '01': '只符合右边：' + b, '00': '两个条件都不符合' };
-    const regions = ['10', '11', '01', '00'].map(k => '<div class="soft-panel"><button class="choice-btn" type="button" data-action="place" data-value="' + k + '">' + labels[k] + '</button><div class="tile-pool">' + s.cards.filter(id => s.assignments[id] === k).map(id => h.tile(id, { action: 'pick', value: id, small: true, selected: s.selected === id })).join('') + '</div></div>').join('');
+    const regions = ['10', '11', '01', '00'].map(k => {
+      const cards = s.cards.filter(id => s.assignments[id] === k);
+      return `<div class="logic-card sieve-region"${cards.length > 10 ? ' data-packed="true"' : ''}>
+        <div class="logic-region-heading"><button class="choice-btn" type="button" data-action="place" data-value="${k}">${labels[k]}</button><small>${cards.length} 张</small></div>
+        <div class="tile-pool">${cards.map(id => h.tile(id, { action: 'pick', value: id, small: true, selected: s.selected === id })).join('')}</div>
+      </div>`;
+    }).join('');
     const options = [...new Set([s.total, s.total + (s.counts['11'] || 3), Math.max(0, s.total - 2), 27])].sort((a, b) => a - b);
-    return '<div class="soft-panel"><h3>左边：条牌　右边：' + b + '</h3><p>本关找出：<strong>' + ask + '</strong>。</p></div>' +
-      '<div class="board-grid" style="--cols:2">' + regions + '</div><h3 class="subheading">待分类的牌</h3><div class="tile-pool">' + tileRow(s.cards.filter(id => !(id in s.assignments)), h, 'pick', s.selected ? [s.selected] : []) + '</div>' +
-      '<div class="soft-panel"><h3>符合本关问题的牌，一共有几张？</h3><div class="choice-row">' + options.map(n => emptyChoice(n + '张', 'guess', n, h, s.guess === n)).join('') + '</div></div><div class="action-row">' + h.button('检查分类与计数', 'check', '', { primary: true }) + '</div>';
+    const available = s.cards.filter(id => !(id in s.assignments));
+    return `<div class="lesson-layout logic-lesson sieve-lesson">
+      <section class="lesson-board logic-pane">
+        <header class="logic-task"><h3>左边：条牌　右边：${b}</h3><p>本关找出<strong>${ask}</strong>。</p></header>
+        <div class="sieve-regions" role="group" aria-label="分类区域">${regions}</div>
+      </section>
+      <section class="lesson-side logic-pane">
+        <div class="logic-heading"><h3>待分类的牌</h3><span>${available.length} 张</span></div>
+        <div class="tile-pool logic-stock logic-stock-dense" role="group" aria-label="待分类的牌">${tileRow(available, h, 'pick', s.selected ? [s.selected] : [])}</div>
+        <div class="logic-proof">
+          <h3>符合本关问题的牌，一共有几张？</h3>
+          <div class="choice-row logic-counts">${options.map(n => emptyChoice(n + '张', 'guess', n, h, s.guess === n)).join('')}</div>
+        </div>
+        <div class="action-row">${h.button('检查分类与计数', 'check', '', { primary: true })}</div>
+      </section>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'pick' && s.cards.includes(a.value)) { s.selected = s.selected === a.value ? null : a.value; return feedback(s, s.selected ? '已选' + name(s.selected) + '，再点一个分类区域。' : '已取消选择。'); }
@@ -154,10 +183,21 @@ const g08 = {
   view(s, h) {
     const selected = s.selected.map(id => info(id));
     const colors = new Set(selected.map(a => a.suit)).size, nums = new Set(selected.map(a => a.rank)).size;
-    const check = s.selected.length === 3 ? '<div class="choice-row"><span class="soft-panel">花色：' + (colors === 1 ? '全相同 ✓' : colors === 3 ? '全不同 ✓' : '两同一异，再看看') + '</span><span class="soft-panel">数字：' + (nums === 1 ? '全相同 ✓' : nums === 3 ? '全不同 ✓' : '两同一异，再看看') + '</span></div>' : '<p class="small-text">选满三张后，可以逐项观察两种属性。</p>';
+    const check = s.selected.length === 3 ? '<div class="family-properties"><span>花色：' + (colors === 1 ? '全相同 ✓' : colors === 3 ? '全不同 ✓' : '两同一异') + '</span><span>数字：' + (nums === 1 ? '全相同 ✓' : nums === 3 ? '全不同 ✓' : '两同一异') + '</span></div>' : '<p class="small-text">选满三张后，可以逐项观察两种属性。</p>';
     const task = s.level === 0 ? '找到第一组成立的三张牌' : s.level === 1 ? '同花色、同数字、两项都不同，三种类型各找一组' : s.level === 4 ? '把九张牌分成三族，每张只能使用一次' : '收齐牌桌上的' + s.total + '种不同组合';
-    return '<div class="soft-panel"><h3>' + task + '</h3><p>同一项必须全相同，或者全不同；两项都要通过。</p></div><div class="tile-pool">' + s.cards.map(id => h.tile(id, { action: 'pick', value: id, selected: s.selected.includes(id), disabled: s.used.includes(id), tag: s.used.includes(id) ? '已分组' : '' })).join('') + '</div>' + check +
-      '<div class="action-row">' + h.button('检查这一族', 'check', '', { primary: true }) + h.button('取消选择', 'clear') + '</div><h3 class="subheading">我的发现图鉴 · ' + s.found.length + '组</h3><div class="collection-grid">' + s.found.map(key => '<div class="collection-card"><div class="tile-pool">' + key.split('|').map(id => h.tile(id, { small: true, disabled: true })).join('') + '</div><p class="small-text">' + TYPE_LABEL[familyType(key.split('|'))] + '</p></div>').join('') + '</div>';
+    const hand = s.cards.map(id => h.tile(id, { action: 'pick', value: id, selected: s.selected.includes(id), disabled: s.used.includes(id), tag: s.used.includes(id) ? '已分组' : '' })).join('');
+    const discoveries = s.found.map(key => {
+      const ids = key.split('|');
+      return `<div class="collection-card"><div class="tile-pool">${ids.map(id => h.tile(id, { small: true, disabled: true })).join('')}</div><p class="small-text">${TYPE_LABEL[familyType(ids)]}</p></div>`;
+    }).join('');
+    return `<div class="family-table">
+      <div class="tile-pool family-hand" role="group" aria-label="待选牌阵" style="--hand-rows:${Math.ceil(s.cards.length / 3)}">${hand}</div>
+      <div class="family-work">
+        <div class="family-task"><h3>${task}</h3><p>同一项必须全相同，或者全不同；两项都要通过。</p></div>
+        <div class="family-controls">${check}<div class="action-row">${h.button('检查这一族', 'check', '', { primary: true })}${h.button('取消选择', 'clear')}</div></div>
+        ${discoveries ? `<section class="family-discoveries" aria-labelledby="family-discoveries-title"><h3 id="family-discoveries-title">我的发现图鉴 <span>${s.found.length} 组</span></h3><div class="collection-grid family-results${s.found.length > 6 ? ' family-results-dense' : ''}">${discoveries}</div></section>` : ''}
+      </div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'pick' && s.cards.includes(a.value) && !s.used.includes(a.value)) {
@@ -247,8 +287,19 @@ const g09 = {
       const locked = s.fixed.includes(i), selected = s.selection && s.selection.from === i;
       return '<div class="slot' + (id ? ' filled' : ' empty') + '"><span class="slot-label">' + (Math.floor(i / 3) + 1) + '行' + (i % 3 + 1) + '列' + (locked ? ' · 锁定' : '') + '</span>' + (id ? h.tile(id, { action: 'cell', value: String(i), disabled: locked, selected, tag: locked ? '线索' : '' }) : h.button('放在这里', 'cell', String(i))) + '</div>';
     }).join('');
-    return '<div class="soft-panel"><h3>每行每列：一二三各一次，筒条萬各一次</h3><p>' + (s.solutionCount === 1 ? '这些线索能确定唯一的完整摆法。' : s.level === 2 ? '这些线索有两种补全。找出任意一种就成立。' : '自由摆阵，所有满足条件的摆法都成立。') + '</p></div>' +
-      '<div class="board-grid" style="--cols:3">' + cells + '</div><h3 class="subheading">待摆的牌</h3><div class="tile-pool">' + nineFaces.filter(id => !s.board.includes(id)).map(id => h.tile(id, { action: 'pick', value: id, selected: s.selection && s.selection.face === id })).join('') + '</div><div class="action-row">' + h.button('检查摆阵', 'check', '', { primary: true }) + h.button('把选中的牌归还', 'return') + '</div>';
+    const available = nineFaces.filter(id => !s.board.includes(id));
+    const hint = s.solutionCount === 1 ? '这些线索能确定唯一的完整摆法。' : s.level === 2 ? '这些线索有两种补全。找出任意一种就成立。' : '自由摆阵，所有满足条件的摆法都成立。';
+    return `<div class="lesson-layout logic-lesson nine-lesson">
+      <section class="lesson-board">
+        <div class="board-grid nine-grid" style="--cols:3" role="group" aria-label="九宫格">${cells}</div>
+      </section>
+      <section class="lesson-side logic-pane">
+        <header class="logic-task"><h3>每行每列各有一、二、三和筒、条、萬</h3><p>${hint}</p></header>
+        <div class="logic-heading"><h3>待摆的牌</h3><span>${available.length} 张</span></div>
+        <div class="tile-pool logic-stock logic-stock-nine" role="group" aria-label="待摆的牌">${available.map(id => h.tile(id, { action: 'pick', value: id, selected: s.selection && s.selection.face === id })).join('')}</div>
+        <div class="action-row">${h.button('检查摆阵', 'check', '', { primary: true })}${h.button('把选中的牌归还', 'return')}</div>
+      </section>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'pick' && nineFaces.includes(a.value) && !s.board.includes(a.value)) { s.selection = { face: a.value, from: null }; return feedback(s, '已选' + name(a.value) + '，再点一个位置。'); }
@@ -320,7 +371,7 @@ export function routeSolutions(cards, cfg = {}, limit = Infinity) {
 function connectionGraph(cards) {
   const points = cards.map((id, i) => ({ id, x: 270 + 118 * Math.cos(-Math.PI / 2 + i * 2 * Math.PI / cards.length), y: 145 + 110 * Math.sin(-Math.PI / 2 + i * 2 * Math.PI / cards.length) }));
   const lines = points.flatMap((a, i) => points.slice(i + 1).filter(b => adjacent(a.id, b.id)).map(b => '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#b9c9be" stroke-width="2"/>')).join('');
-  return '<svg viewBox="0 0 540 290" style="width:100%;max-height:250px" role="img" aria-label="牌与牌之间可以连接的关系图">' + lines + points.map(p => '<circle cx="' + p.x + '" cy="' + p.y + '" r="23" fill="#f8f5e9" stroke="#2b6854"/><text x="' + p.x + '" y="' + (p.y + 5) + '" text-anchor="middle" fill="#244f40" font-size="14">' + name(p.id) + '</text>').join('') + '</svg>';
+  return '<svg viewBox="123 6 294 278" role="img" aria-label="牌与牌之间可以连接的关系图">' + lines + points.map(p => '<circle cx="' + p.x + '" cy="' + p.y + '" r="23" fill="#f8f5e9" stroke="#2b6854"/><text x="' + p.x + '" y="' + (p.y + 5) + '" text-anchor="middle" fill="#244f40" font-size="14">' + name(p.id) + '</text>').join('') + '</svg>';
 }
 const six = ['dots_01', 'dots_02', 'dots_03', 'bamboo_01', 'bamboo_02', 'bamboo_03'];
 const g10 = {
@@ -335,11 +386,24 @@ const g10 = {
     return { ...base(level, seed, ring ? '接满全部牌之后，还要检查首尾能否相接。' : '先选起点，再选同花色或同数字的下一张。'), ...cfg, cards: shuffle(cards, seed), route: [], found: [], total, showGraph: false, progress: { current: 0, total: cards.length, label: '路线中的牌' } };
   },
   view(s, h) {
-    const route = s.route.map((id, i) => (i ? '<span class="small-text" aria-hidden="true">→</span>' : '') + h.tile(id, { action: 'remove', value: String(i), small: true, selected: i === s.route.length - 1 })).join('');
-    return '<div class="soft-panel"><h3>' + (s.ring ? '环形路线：最后要回到起点' : '线形路线：从头走到尾') + '</h3><p>' + (s.start ? '起点是' + name(s.start) + '，终点是' + name(s.end) + '。' : '相邻两张，同花色或者同数字。每张牌只经过一次。') + '</p></div><div class="soft-panel"><div class="tile-pool">' + (route || '<p class="small-text">这里是你的路线，先从下面选一张牌。</p>') + (s.ring && s.route.length ? '<span class="small-text">↩ 回起点</span>' : '') + '</div></div>' +
-      '<h3 class="subheading">还没有经过的牌</h3><div class="tile-pool">' + s.cards.filter(id => !s.route.includes(id)).map(id => h.tile(id, { action: 'pick', value: id })).join('') + '</div><div class="action-row">' + h.button('检查完整路线', 'check', '', { primary: true }) + h.button('撤回末张', 'back') + h.button('清空路线', 'clear') + h.button(s.showGraph ? '收起连接图' : '看看连接图', 'graph') + '</div>' +
-      (s.showGraph ? '<div class="soft-panel"><h3>连线表示两张牌可以相邻</h3>' + connectionGraph(s.cards) + '</div>' : '') +
-      (s.level === 4 ? '<div class="soft-panel"><h3>环形图鉴：' + s.found.length + ' / ' + s.total + '</h3><p class="small-text">换起点或反向走，仍是同一条环。</p>' + s.found.map((key, i) => '<p class="small-text">' + (i + 1) + '：' + key.split('|').map(name).join(' → ') + '</p>').join('') + '</div>' : '');
+    const route = s.route.map((id, i) => `<li>${h.tile(id, { action: 'remove', value: String(i), selected: i === s.route.length - 1, label: '第' + (i + 1) + '步，' + name(id), tag: String(i + 1) })}</li>`).join('');
+    const available = s.cards.filter(id => !s.route.includes(id));
+    return `<div class="lesson-layout logic-lesson route-lesson">
+      <section class="lesson-board logic-pane">
+        <div class="logic-route">
+          <div class="logic-heading"><h3>你的路线</h3><span>${s.route.length} / ${s.cards.length} 张${s.ring && s.route.length ? ' · 末张要能接回起点' : ''}</span></div>
+          ${route ? `<ol class="route-track" aria-label="已经排好的路线">${route}</ol>` : '<p class="small-text">从下面选一张牌作为起点。</p>'}
+        </div>
+        <div class="logic-heading"><h3>还没有经过的牌</h3><span>${available.length} 张</span></div>
+        <div class="tile-pool route-stock" role="group" aria-label="还没有经过的牌">${tileRow(available, h)}</div>
+      </section>
+      <section class="lesson-side logic-pane">
+        <header class="logic-task"><h3>${s.ring ? '环形路线：最后要回到起点' : '线形路线：从头走到尾'}</h3><p>${s.start ? '起点是' + name(s.start) + '，终点是' + name(s.end) + '。' : '相邻两张，同花色或者同数字。每张牌只经过一次。'}</p></header>
+        <div class="action-row">${h.button('检查完整路线', 'check', '', { primary: true })}${h.button('撤回末张', 'back')}${h.button('清空路线', 'clear')}${h.button(s.showGraph ? '收起连接图' : '看看连接图', 'graph')}</div>
+        ${s.showGraph ? `<div class="logic-card route-graph"><h3>连线表示两张牌可以相邻</h3>${connectionGraph(s.cards)}</div>` : ''}
+        ${s.level === 4 ? `<section class="route-collection"><div class="logic-heading"><h3>环形图鉴</h3><span>${s.found.length} / ${s.total}</span></div><p class="small-text">换起点或反向走，仍是同一条环。</p>${s.found.length ? `<ol>${s.found.map(key => '<li>' + key.split('|').map(name).join(' → ') + '</li>').join('')}</ol>` : ''}</section>` : ''}
+      </section>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'graph') { s.showGraph = !s.showGraph; return s; }

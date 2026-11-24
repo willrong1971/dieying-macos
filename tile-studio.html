@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#122c27">
+  <title>认牌馆 · 麻将数学工坊</title>
+  <link rel="icon" href="./public/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./src/tile-studio.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
+</head>
+<body>
+  <header class="museum-header">
+    <a class="museum-brand" href="./index.html" aria-label="麻将数学工坊">
+      <span class="brand-stamp" aria-hidden="true">三</span><span data-word="brand">麻将数学工坊</span>
+    </a>
+    <nav class="site-nav">
+      <a href="./index.html" data-word="workshop">数学桌</a>
+      <a href="./solitaire.html" data-word="solitaire">对对碰</a>
+      <button id="language-button" type="button" lang="en">English</button>
+    </nav>
+  </header>
+
+  <main class="museum">
+    <div class="museum-heading">
+      <div>
+        <h1 data-word="title">认牌馆</h1>
+        <p data-word="lead">从幺鸡开始，认一认麻将牌。</p>
+      </div>
+      <div class="page-modes" role="group" aria-label="查看方式" data-label="modes">
+        <button id="learn-mode" type="button" aria-pressed="true" data-word="learn">认识牌面</button>
+        <button id="practice-mode" type="button" aria-pressed="false" data-word="practice">认牌练习</button>
+      </div>
+    </div>
+
+    <div class="museum-layout">
+      <section class="display-card" aria-labelledby="display-title">
+        <div class="stage" id="stage">
+          <div class="rings" aria-hidden="true"></div>
+          <div class="stage-label">
+            <span id="display-title" data-word="viewer">立体鉴赏</span>
+            <small id="model-status" role="status">准备立体牌面…</small>
+          </div>
+          <canvas id="studio-canvas" tabindex="0" hidden></canvas>
+          <div class="preview" id="preview"></div>
+          <div id="practice-board" class="practice-board" hidden>
+            <div>
+              <p id="practice-step" class="practice-step"></p>
+              <h2 id="question"></h2>
+              <p id="question-reading" class="question-reading"></p>
+            </div>
+            <div id="choices" class="choices" role="group" data-label="choices" aria-label="候选牌"></div>
+            <div class="practice-bottom">
+              <p id="answer-feedback" role="status" aria-live="polite"></p>
+              <p id="practice-hint" class="practice-hint" hidden></p>
+              <button type="button" id="next-question" class="gold-button" hidden></button>
+            </div>
+          </div>
+          <button id="immersive-exit" class="immersive-exit" type="button" data-word="exit" hidden>返回菜单 · Esc</button>
+        </div>
+        <div class="viewer-bar" id="viewer-controls">
+          <div class="viewer-angles" role="group" data-label="angles" aria-label="角度和缩放">
+            <button type="button" data-view="front" data-word="front" aria-pressed="false">正面</button>
+            <button type="button" data-view="back" data-word="back" aria-pressed="false">牌背</button>
+            <button type="button" data-view="relief" data-word="relief" aria-pressed="false">掠光近看</button>
+            <button type="button" data-view="reset" data-word="reset" aria-pressed="true">复位</button>
+          </div>
+          <div class="viewer-tools">
+            <button type="button" data-zoom=".82" data-label="zoomIn" aria-label="放大">＋</button>
+            <button type="button" data-zoom="1.22" data-label="zoomOut" aria-label="缩小">−</button>
+            <button type="button" id="immersive-enter" data-global="immersive" data-label="immersive" aria-label="沉浸鉴赏">⛶</button>
+          </div>
+        </div>
+        <p class="display-caption" id="display-caption" data-word="controls">拖动旋转 · 滚轮或双指缩放</p>
+      </section>
+
+      <aside class="info-card">
+        <div id="learn-details">
+          <div class="face-info">
+            <div class="face-meta"><span id="group-name"></span><span id="group-position"></span></div>
+            <h2 id="face-name"></h2>
+            <p class="face-reading"><span id="face-pinyin" lang="zh-Latn"></span><span id="face-translation"></span></p>
+            <p id="face-tip" class="face-tip"></p>
+          </div>
+          <section class="browse">
+            <div class="browse-heading"><h3 data-word="browse">按花色看牌</h3><span data-word="count">42 种牌面</span></div>
+            <div id="group-buttons" class="group-buttons" role="group" data-label="groupFilters" aria-label="花色"></div>
+            <div id="face-buttons" class="face-buttons" role="group" data-label="tileFaces" aria-label="当前花色的牌"></div>
+            <button id="compare" type="button" aria-pressed="false" data-word="compare">对照万、条、筒</button>
+          </section>
+        </div>
+        <div id="practice-details" class="face-info" hidden>
+          <h2 data-word="practice">认牌练习</h2>
+          <p class="face-tip" data-word="practiceTip">看名字找牌。答错可以再试一次。</p>
+        </div>
+        <div class="material-row" role="group" data-label="material" aria-label="牌的材质">
+          <button type="button" data-theme="ivory" aria-pressed="true"><i class="swatch ivory" aria-hidden="true"></i><span data-word="ivory">暖象牙</span></button>
+          <button type="button" data-theme="bamboo" aria-pressed="false"><i class="swatch bamboo" aria-hidden="true"></i><span data-word="bamboo">竹制</span></button>
+          <button type="button" data-theme="porcelain" aria-pressed="false"><i class="swatch porcelain" aria-hidden="true"></i><span data-word="porcelain">白瓷</span></button>
+        </div>
+        <button type="button" id="retry-load" data-word="retry" hidden>重试立体画面</button>
+      </aside>
+    </div>
+    <p id="startup-error" role="alert" hidden>请先启动数学工坊，再进入 <a href="http://localhost:8787/tile-studio.html">本机认牌馆</a>。</p>
+    <noscript><p>请开启 JavaScript。 Enable JavaScript to explore the tiles.</p></noscript>
+  </main>
+  <script>
+    const startupError = document.querySelector('#startup-error');
+    if (location.protocol === 'file:') startupError.hidden = false;
+    else import('./src/tile-studio.js').catch(error => {
+      console.error('Tile gallery startup:', error);
+      startupError.hidden = false;
+    });
+  </script>
+</body>
+</html>

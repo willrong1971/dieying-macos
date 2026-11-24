@@ -68,12 +68,24 @@ export function boxDistributions(total, boxes, { min = 0, max = total, first = n
   visit([], total); return out;
 }
 
-function collectionHTML(found, render, h) {
-  return `<section class="soft-panel"><h3 class="subheading">发现图鉴 <span class="small-text">${found.length}项</span></h3>${found.length ? `<div class="collection-grid">${found.map((entry, i) => `<div class="collection-card"><span class="small-text">${i + 1}</span>${render(entry)}</div>`).join('')}</div>` : '<p class="small-text">每找到一种新办法，就把它收进来。相同的办法只记一次。</p>'}</section>`;
+function collectionHTML(found, render) {
+  const cards = found.map((entry, i) => `<div class="collection-card"><span class="small-text">${i + 1}</span>${render(entry)}</div>`).join('');
+  return `<section class="counting-collection">
+    <h3 class="subheading">发现图鉴 <span class="small-text">${found.length} 项</span></h3>
+    ${cards ? `<div class="collection-grid">${cards}</div>` : '<p class="small-text">每找到一种新办法，就把它收进来。相同的办法只记一次。</p>'}
+  </section>`;
 }
 
-function slotHTML(h, chosen, count, { prefix = '', ordered = true } = {}) {
-  return `<div class="tile-pool">${Array.from({ length: count }, (_, i) => `<div class="slot ${chosen[i] ? 'filled' : 'empty'}"><span class="slot-label">${ordered ? `第${i + 1}位` : '选牌托盘'}</span>${chosen[i] ? h.tile(chosen[i].face, { action: `${prefix}remove`, value: String(i), tag: chosen[i].tag || '', label: `${label(chosen[i].face)}，点击取回` }) : `<span class="small-text">${ordered ? i + 1 : '放一张'}</span>`}</div>`).join('')}</div>`;
+function inventoryHTML(content, count, columns) {
+  return `<div class="tile-pool counting-inventory" style="--inventory-cols:${columns};--inventory-rows:${Math.ceil(count / columns)}">${content}</div>`;
+}
+
+function slotHTML(h, chosen, count, { ordered = true } = {}) {
+  const slots = Array.from({ length: count }, (_, i) => `<div class="slot ${chosen[i] ? 'filled' : 'empty'}">
+    <span class="slot-label">${ordered ? `第${i + 1}位` : '选牌托盘'}</span>
+    ${chosen[i] ? h.tile(chosen[i].face, { action: 'remove', value: String(i), tag: chosen[i].tag || '', label: `${label(chosen[i].face)}，点击取回` }) : `<span class="counting-tray-empty small-text">${ordered ? i + 1 : '放一张'}</span>`}
+  </div>`).join('');
+  return `<div class="tile-pool counting-tray" style="--tray-slots:${count}">${slots}</div>`;
 }
 
 const museumConfigs = [
@@ -98,10 +110,24 @@ export const museum = {
     const cfg = museumConfigs[s.level], placed = Object.values(s.cells), pool = s.order.filter(k => !placed.includes(k));
     const keys = s.transpose ? Array.from({ length: cfg.ranks }, (_, i) => SUITS.map(suit => face(i + 1, suit))).flat() : s.all;
     const cols = s.transpose ? 3 : cfg.ranks;
-    return `<div class="soft-panel"><div class="action-row"><p class="small-text">${s.missing.length ? `本关少了${s.missing.length}张牌。先整理，再点空位标记缺牌。` : '点选散牌，再点对应的位置。点已放入的牌可以取回。'}</p>${h.button('行列换个方向', 'transpose')}</div><div class="board-grid" style="--cols:${cols}">${keys.map(key => {
+    const slots = keys.map(key => {
       const current = s.cells[key], guessed = s.guesses.includes(key);
-      return `<div class="slot ${current ? 'filled' : 'empty'}${guessed ? ' selected' : ''}"><span class="slot-label">${rankOf(key)} · ${SUIT_NAMES[key.split('_')[0]]}</span>${current ? h.tile(current, { action: 'return', value: key, label: `${label(current)}，取回展柜外` }) : h.button(guessed ? '已标为缺牌' : s.selected ? '放这里' : '空位', 'place', key, { primary: guessed })}</div>`;
-    }).join('')}</div></div><h3 class="subheading">待整理的牌 <span class="small-text">${pool.length}张</span></h3><div class="tile-pool">${pool.map(key => h.tile(key, { action: 'pick', value: key, selected: s.selected === key })).join('')}</div><div class="action-row">${h.button('检查展柜', 'check', '', { primary: true })}${s.selected ? h.button('取消选牌', 'cancel') : ''}</div>`;
+      const slotLabel = `${rankOf(key)} · ${SUIT_NAMES[key.split('_')[0]]}`;
+      const tile = current ? h.tile(current, { action: 'return', value: key, label: `${label(current)}，取回展柜外` }) : h.button(guessed ? '已标为缺牌' : s.selected ? '放这里' : '空位', 'place', key, { primary: guessed });
+      return `<div class="slot museum-slot ${current ? 'filled' : 'empty'}${guessed ? ' selected' : ''}"><span class="slot-label">${slotLabel}</span>${tile}</div>`;
+    }).join('');
+    const inventory = inventoryHTML(pool.map(key => h.tile(key, { action: 'pick', value: key, selected: s.selected === key })).join(''), s.order.length, s.order.length > 18 ? 7 : s.order.length > 9 ? 5 : 3);
+    return `<div class="lesson-layout counting-layout museum-layout${cfg.ranks > 3 && !s.transpose ? ' museum-wide-cabinet' : ''}">
+      <section class="lesson-board museum-cabinet">
+        <div class="museum-cabinet-heading"><p class="small-text">${s.missing.length ? `本关少了${s.missing.length}张牌。先整理，再点空位标记缺牌。` : '点选散牌，再点对应的位置。点已放入的牌可以取回。'}</p>${h.button('行列换个方向', 'transpose')}</div>
+        <div class="board-grid museum-grid${s.transpose && cfg.ranks > 3 ? ' museum-many-rows' : ''}" style="--cols:${cols};--cabinet-rows:${keys.length / cols}">${slots}</div>
+      </section>
+      <section class="lesson-side counting-side museum-stock">
+        <h3 class="subheading">待整理的牌 <span class="small-text">${pool.length} 张</span></h3>
+        ${inventory}
+        <div class="action-row">${h.button('检查展柜', 'check', '', { primary: true })}${s.selected ? h.button('取消选牌', 'cancel') : ''}</div>
+      </section>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'pick' && s.order.includes(a.value) && !Object.values(s.cells).includes(a.value)) s.selected = s.selected === a.value ? null : a.value;
@@ -146,7 +172,22 @@ export const recipes = {
   },
   view(s, h) {
     const cfg = recipeConfigs[s.level], selected = s.chosen.map(id => s.cards.find(c => c.id === id));
-    return `<div class="soft-panel"><div class="formula">用${cfg.count}张牌，凑成 <strong>${cfg.sum}</strong></div><p class="small-text">每个数字${cfg.copies}张 · 左右交换是同一个配方</p>${slotHTML(h, selected, cfg.count, { ordered: false })}<div class="action-row">${h.button('收入图鉴', 'submit', '', { primary: true })}${h.button('取回所选', 'clear')}</div></div><h3 class="subheading">备牌区</h3><div class="tile-pool">${s.cards.map(c => h.tile(c.face, { action: 'pick', value: c.id, disabled: s.chosen.includes(c.id), label: `${label(c.face)}，备牌${c.id.split('-')[1] === '0' ? '甲' : '乙'}` })).join('')}</div>${collectionHTML(s.found, entry => `<span class="formula">${entry.join('＋')}＝${cfg.sum}</span>`, h)}`;
+    const tiles = s.cards.map(c => h.tile(c.face, { action: 'pick', value: c.id, disabled: s.chosen.includes(c.id), label: `${label(c.face)}，备牌${c.id.split('-')[1] === '0' ? '甲' : '乙'}` })).join('');
+    return `<div class="lesson-layout counting-layout recipe-layout">
+      <section class="lesson-board counting-board">
+        <h3 class="subheading">备牌区</h3>
+        ${inventoryHTML(tiles, s.cards.length, s.cards.length > 10 ? 6 : s.cards.length === 10 ? 5 : 3)}
+      </section>
+      <div class="lesson-side counting-side">
+        <section class="counting-task">
+          <div class="formula">用${cfg.count}张牌，凑成 <strong>${cfg.sum}</strong></div>
+          <p class="small-text">每个数字${cfg.copies}张 · 左右交换是同一个配方</p>
+          ${slotHTML(h, selected, cfg.count, { ordered: false })}
+          <div class="action-row">${h.button('收入图鉴', 'submit', '', { primary: true })}${h.button('取回所选', 'clear')}</div>
+        </section>
+        ${collectionHTML(s.found, entry => `<span class="formula">${entry.join('＋')}＝${cfg.sum}</span>`)}
+      </div>
+    </div>`;
   },
   act(s, a) {
     const cfg = recipeConfigs[s.level];
@@ -196,7 +237,24 @@ export const selections = {
   },
   view(s, h) {
     const cfg = selectionConfigs[s.level];
-    return `<div class="choice-row">${h.button(`选在一起 ${s.found.choose.length}/${s.answers.choose.length}`, 'mode', 'choose', { primary: s.mode === 'choose' })}${h.button(`排成队 ${s.found.queue.length}/${s.answers.queue.length}`, 'mode', 'queue', { primary: s.mode === 'queue' })}</div><div class="soft-panel"><h3 class="subheading">${s.mode === 'choose' ? '只看选中了哪些牌' : '每一个位置都有意义'}</h3><p class="small-text">${s.mode === 'queue' && cfg.forbidFirst ? '本关排队另有条件：一筒不能站在第一位。' : `从${cfg.n}张不同牌中选${cfg.k}张。${s.mode === 'choose' ? '交换位置不产生新选法。' : '第一位变了，队列就可能不同。'}`}</p>${slotHTML(h, s.chosen.map(n => ({ face: face(n) })), cfg.k, { ordered: s.mode === 'queue' })}<div class="action-row">${h.button('收入这册图鉴', 'submit', '', { primary: true })}${h.button('交换前两张', 'swap', '', { disabled: s.chosen.length < 2 })}${h.button('取回所选', 'clear')}</div></div><div class="tile-pool">${s.order.map(n => h.tile(face(n), { action: 'pick', value: String(n), disabled: s.chosen.includes(n) })).join('')}</div>${collectionHTML(s.found[s.mode], entry => `<span class="formula">${s.mode === 'choose' ? '｛' : ''}${entry.join(s.mode === 'choose' ? '、' : ' → ')}${s.mode === 'choose' ? '｝' : ''}</span>`, h)}`;
+    const choosing = s.mode === 'choose';
+    const tiles = s.order.map(n => h.tile(face(n), { action: 'pick', value: String(n), disabled: s.chosen.includes(n) })).join('');
+    const guidance = !choosing && cfg.forbidFirst ? '本关排队另有条件：一筒不能站在第一位。' : `从${cfg.n}张不同牌中选${cfg.k}张。${choosing ? '交换位置不产生新选法。' : '第一位变了，队列就可能不同。'}`;
+    return `<div class="lesson-layout counting-layout selection-layout">
+      <section class="lesson-board counting-board">
+        <div class="choice-row">${h.button(`选在一起 ${s.found.choose.length}/${s.answers.choose.length}`, 'mode', 'choose', { primary: choosing })}${h.button(`排成队 ${s.found.queue.length}/${s.answers.queue.length}`, 'mode', 'queue', { primary: !choosing })}</div>
+        ${inventoryHTML(tiles, cfg.n, cfg.n)}
+      </section>
+      <div class="lesson-side counting-side">
+        <section class="counting-task">
+          <h3 class="subheading">${choosing ? '只看选中了哪些牌' : '每一个位置都有意义'}</h3>
+          <p class="small-text">${guidance}</p>
+          ${slotHTML(h, s.chosen.map(n => ({ face: face(n) })), cfg.k, { ordered: !choosing })}
+          <div class="action-row">${h.button('收入这册图鉴', 'submit', '', { primary: true })}${h.button('交换前两张', 'swap', '', { disabled: s.chosen.length < 2 })}${h.button('取回所选', 'clear')}</div>
+        </section>
+        ${collectionHTML(s.found[s.mode], entry => `<span class="formula">${choosing ? `｛${entry.join('、')}｝` : entry.join(' → ')}</span>`)}
+      </div>
+    </div>`;
   },
   act(s, a) {
     const cfg = selectionConfigs[s.level];
@@ -247,7 +305,16 @@ export const repetitions = {
     return { ...base(level, seed), goal, config, cards, arrangement: shuffled(cards.map(c => c.id), seed), selected: null, found: [], answers, progress: { current: 0, total: answers.length, label: '不同队列' } };
   },
   view(s, h) {
-    return `<div class="soft-panel"><h3 class="subheading">点两张牌，交换位置</h3><p class="small-text">${s.config.tagged ? '甲、乙、丙标记可见，本关把身份也算作区别；这册图鉴与普通图案图鉴分开。' : '只看正面图案 · 同牌交换不增加答案 · 左右镜像算不同'}</p><div class="tile-pool">${repeatCards(s).map((c, i) => `<div><span class="slot-label">第${i + 1}位</span>${h.tile(c.face, { action: 'swap-pick', value: String(i), selected: s.selected === i, tag: c.tag })}</div>`).join('')}</div><div class="action-row">${h.button('收入当前队列', 'submit', '', { primary: true })}${h.button('取消选中', 'cancel', '', { disabled: s.selected === null })}</div></div>${collectionHTML(s.found, entry => `<span class="formula">${entry.display.join(' → ')}</span>`, h)}`;
+    const tiles = repeatCards(s).map((c, i) => `<div class="repeat-position"><span class="slot-label">第${i + 1}位</span>${h.tile(c.face, { action: 'swap-pick', value: String(i), selected: s.selected === i, tag: c.tag })}</div>`).join('');
+    return `<div class="lesson-layout counting-layout repeat-layout">
+      <section class="lesson-board counting-board repeat-board">
+        <h3 class="subheading">点两张牌，交换位置</h3>
+        <p class="small-text">${s.config.tagged ? '甲、乙、丙标记可见，本关把身份也算作区别；这册图鉴与普通图案图鉴分开。' : '只看正面图案 · 同牌交换不增加答案 · 左右镜像算不同'}</p>
+        ${inventoryHTML(tiles, s.cards.length, s.cards.length)}
+        <div class="action-row">${h.button('收入当前队列', 'submit', '', { primary: true })}${h.button('取消选中', 'cancel', '', { disabled: s.selected === null })}</div>
+      </section>
+      <div class="lesson-side counting-side">${collectionHTML(s.found, entry => `<span class="formula">${entry.display.join(' → ')}</span>`)}</div>
+    </div>`;
   },
   act(s, a) {
     if (a.type === 'cancel') s.selected = null;
@@ -294,7 +361,26 @@ export const houses = {
   view(s, h) {
     const cfg = s.config, left = cfg.total - s.counts.reduce((a, b) => a + b, 0);
     const rule = cfg.first === 1 ? '甲必须恰好一张，其他房间可以空。' : cfg.min ? '每间房至少住一张牌。' : cfg.max === 2 ? '可以空房，但每间最多两张。' : '可以空房，房间按名字区分。';
-    return `<div class="soft-panel"><p class="small-text">${rule}</p><div class="board-grid" style="--cols:${cfg.boxes}">${s.counts.map((count, i) => `<section class="slot ${count ? 'filled' : 'empty'}"><h3 class="subheading">${'甲乙丙'[i]}房 <span class="small-text">${count}张</span></h3><div class="tile-pool">${Array.from({ length: count }, () => h.tile('dots_01', { action: 'remove', value: String(i), small: true, label: `从${'甲乙丙'[i]}房取回一张` })).join('')}</div>${h.button('放一张', 'add', String(i), { disabled: left === 0 || count >= (cfg.max ?? cfg.total) })}</section>`).join('')}</div><div class="action-row">${h.button('收录这次分法', 'submit', '', { primary: true })}${h.button('全部取回', 'clear')}</div></div><h3 class="subheading">还没分配 <span class="small-text">${left}张</span></h3><div class="tile-pool">${Array.from({ length: left }, () => h.tile('dots_01', { disabled: true, small: true, label: '还没分配的一筒' })).join('')}${left === 0 ? '<p class="small-text">都住进房间了，检查后收录吧。</p>' : ''}</div>${collectionHTML(s.found, entry => `<span class="formula">${entry.map((n, i) => `${'甲乙丙'[i]}${n}`).join(' · ')}</span>`, h)}`;
+    const capacity = cfg.max ?? cfg.total;
+    const rooms = s.counts.map((count, i) => `<section class="slot room-slot ${count ? 'filled' : 'empty'}">
+      <h3 class="subheading">${'甲乙丙'[i]}房 <span class="small-text">${count} 张</span></h3>
+      <div class="tile-pool room-tray">${Array.from({ length: count }, () => h.tile('dots_01', { action: 'remove', value: String(i), small: true, label: `从${'甲乙丙'[i]}房取回一张` })).join('')}</div>
+      ${h.button('放一张', 'add', String(i), { disabled: left === 0 || count >= capacity })}
+    </section>`).join('');
+    const unassigned = Array.from({ length: left }, () => h.tile('dots_01', { disabled: true, small: true, label: '还没分配的一筒' })).join('');
+    return `<div class="lesson-layout counting-layout houses-layout">
+      <section class="lesson-board counting-board houses-board">
+        <p class="small-text">${rule}</p>
+        <div class="board-grid room-grid" style="--cols:${cfg.boxes};--room-rows:${Math.ceil(capacity / 2)}">${rooms}</div>
+        <div class="action-row">${h.button('收录这次分法', 'submit', '', { primary: true })}${h.button('全部取回', 'clear')}</div>
+      </section>
+      <div class="lesson-side counting-side">
+        <section class="house-stock"><h3 class="subheading">还没分配 <span class="small-text">${left} 张</span></h3>
+          ${unassigned ? inventoryHTML(unassigned, cfg.total, cfg.total) : '<p class="small-text">都住进房间了，检查后收录吧。</p>'}
+        </section>
+        ${collectionHTML(s.found, entry => `<span class="formula">${entry.map((n, i) => `${'甲乙丙'[i]}${n}`).join(' · ')}</span>`)}
+      </div>
+    </div>`;
   },
   act(s, a) {
     const cfg = s.config, placed = s.counts.reduce((a, b) => a + b, 0);

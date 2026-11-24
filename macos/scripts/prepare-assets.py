@@ -15,7 +15,7 @@ MANIFEST_NAME = "asset-manifest.json"
 
 
 def runtime_files(root: Path) -> list[Path]:
-    files = [root / "index.html", root / "solitaire.html", root / "public/icon.svg"]
+    files = [root / "index.html", root / "solitaire.html", root / "tile-studio.html", root / "public/icon.svg"]
     files += sorted(path for path in (root / "src").rglob("*") if path.is_file() and path.suffix in {".js", ".css"})
     files += sorted(path for path in (root / "vendor/three").rglob("*") if path.is_file())
     for folder in ("ivory-warm", "v2"):
